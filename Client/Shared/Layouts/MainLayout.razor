@@ -1,0 +1,200 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.UserAuthenticationsService UserAuthenticationsService;
+
+<div class="container-scroller rtl font-iranSansWeb">
+    <!-- navbar -->
+    <MainLayoutTheme_MenuTop />
+
+    <!-- page-body-wrapper -->
+    <div class="container-fluid page-body-wrapper">
+
+        <!-- sidebar -->
+        <MainLayoutTheme_MenuSide />
+
+        <!-- main-panel -->
+        <div class="main-panel">
+
+            @*<AuthorizeView>
+            <Authorized>
+            <text>Hello, @context.User.Identity.Name</text>
+            <a href="/logout">Logout</a>
+            </Authorized>
+            <NotAuthorized>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+            </NotAuthorized>
+            </AuthorizeView>*@
+
+            <!-- content-wrapper -->
+            <div class="content-wrapper">
+                @Body
+            </div>
+
+            <!-- footer -->
+            <footer class="footer">
+                <div class="container-fluid d-flex justify-content-between">
+                    <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">
+                        <img src="@(Resources.DefaultValues.CompanyLogo)" alt="logo" width="32" />
+                        <span class="tejaratbank-color">@(Resources.DefaultValues.CompanyName) © @(Nazm.DateConversionClass.GetInstance().GetPersianDateCurrentYear())</span>
+                    </span>
+                    <span class="text-center">
+                        @($"{Resources.DataDictionary.Version} : {Resources.DefaultValues.ApplicationVersion}")
+                        <button type="button" class="btn btn-link btn-sm" title="@(Resources.Buttons.VersionChanges)" data-bs-toggle="modal" data-bs-target="#modalVersion">
+                            <i class="@(Resources.ButtonsIcon.VersionChanges) @(Resources.DefaultValues.IconSize24)"></i>
+                        </button>
+                    </span>
+                    <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> <a class="tejaratbank-color" href="@(Resources.DefaultValues.CompanyLink)" target="_blank">@(Resources.DefaultValues.CompanyLinkTitle)</a></span>
+                </div>
+            </footer>
+        </div>
+
+    </div>    
+
+    <NazmModal UniqueId="modalLogout"
+               RequiredClose="true"
+               IconType="Infrastructure.Enums.ModalClass.ModalIconType.Warning"
+               StateType="Infrastructure.Enums.ModalClass.ModalStateType.Confirm"
+               Title="@(Resources.DataDictionary.Warning)"
+               EventCallbackHandler="LogoutHandlerAsync">
+        <Body>
+            @(Resources.Messages.Validations.MessageLogout)
+        </Body>
+    </NazmModal>
+
+    <NazmModal UniqueId="modalVersion"
+               RequiredClose="true"
+               SizeType="Infrastructure.Enums.ModalClass.ModalSizeType.xl"
+               IconType="Infrastructure.Enums.ModalClass.ModalIconType.Info"
+               StateType="Infrastructure.Enums.ModalClass.ModalStateType.Close"
+               Title="@(Resources.DataDictionary.VersionChanges)">
+        <Body>
+            <h5><strong>تغییرات نسخه 1.24</strong></h5>
+            <ol class="">                
+                <li class="line-height-style">تغییر نام "قاعده" به "شاخص" </li>
+                <li class="line-height-style">ایجاد منوی "داشبورد قواعد FIU  و AML" و زیر منوهای</li>
+                <li class="line-height-style">در منوی "داشبورد قواعد FIU و AML" تغییر زیرمنوی "داشبورد هوش تجاری" به "داشبورد قواعد FIU و قوانین داخلی"</li>
+                <li class="line-height-style">در منوی "داشبورد قواعد FIU و AML" ایجاد فرم و زیرمنوی "قواعد AML""</li>
+            </ol>
+            <hr />
+            <h5><strong>تغییرات نسخه 1.23</strong></h5>
+            <ol class="">                
+                <li class="line-height-style">تغییر صفحه ورود</li>
+                <li class="line-height-style">در منوی "کارتابل" و زیرمنوی "کارتابل موارد کشف شده" افزودن ستون "کد سطح مظنونین"</li>
+            </ol>
+            <hr />
+            <h5><strong>تغییرات نسخه 1.22</strong></h5>
+            <ol class="">                
+                <li class="line-height-style">در منوی "کارتابل" و زیرمنوی "کارتابل لیست سیاه مشتریان شعبه" افزودن دکمه و عملیات "ثبت نظر"</li>
+                <li class="line-height-style">در منوی "تنظیم قواعد"، ایجاد زیرمنو و فرم جدید "مقادیر پارامتر اجرای قاعده"</li>
+                <li class="line-height-style">در منوی "موتور کشف"، ایجاد زیرمنو و فرم جدید "تعیین پردازش قاعده"</li>
+                <li class="line-height-style">در منوی "موتور کشف"، ایجاد زیرمنو و فرم جدید "تعیین پارامترهای پردازش قاعده"</li>
+                <li class="line-height-style">در منوی "موتور کشف"، ایجاد زیرمنو و فرم جدید "زمانبندی اجرای قواعد"</li>
+                <li class="line-height-style">در منوی "موتور کشف"، ایجاد زیرمنو و فرم جدید "اولویت بندی اجرای قواعد"</li>
+                <li class="line-height-style">در منوی "موتور کشف"، ایجاد زیرمنو و فرم جدید "تعیین الگوی خروجی قواعد"</li>
+                <li class="line-height-style">در منوی "پروفایل"، بهبود نمودارها در فرم "پروفایل مشتری"</li>
+                <li class="line-height-style">در منوی "مدیریت دسترسی ها و کاربران" و زیرمنوی "لیست کاربران" اضافه نمودن دکمه فعال/غیرفعال</li>
+                <li class="line-height-style">افزودن آیکون برای منوها و بهبود نمایش منوها</li>
+                <li class="line-height-style">تغییر منوی "داشبورد کلیک ویو" به "داشبورد هوش تجاری"</li>
+            </ol>
+            <hr />
+            <h5><strong>تغییرات نسخه 1.21</strong></h5>
+            <ol class="">
+                <li class="line-height-style">در منوی "پروفایل"، بهبود نمودارها در فرم "پروفایل جزئیات رفتاری مشتری"</li>
+                <li class="line-height-style">در منوی "پروفایل"، بهبود نمودارها در فرم "پروفایل جزئیات رفتاری حساب"</li>
+                <li class="line-height-style">در منوی "کارتابل موارد کشف شده" و دکمه و فرم "اطلاعات خاص حساب" افزودن قابلیت جداسازی سه رقم سه رقم بر روی ستون های عددی</li>
+            </ol>
+            <hr />
+            <h5><strong>تغییرات نسخه 1.20</strong></h5>
+            <ol class="">
+                <li class="line-height-style">در منوی "پروفایل"، ایجاد زیرمنو و فرم جدید "پروفایل مشتری"</li>
+                <li class="line-height-style">در منوی "پروفایل"، ایجاد زیرمنو و فرم جدید "پروفایل حساب"</li>
+                <li class="line-height-style">در منوی "پروفایل"، ایجاد زیرمنو و فرم جدید "پروفایل جزئیات رفتاری مشتری"</li>
+                <li class="line-height-style">در منوی "پروفایل"، ایجاد زیرمنو و فرم جدید "پروفایل جزئیات رفتاری حساب"</li>
+                <li class="line-height-style">در منوی "تنظیم قواعد"، اصلاح فرم "اختصاص مجوز مناطق"</li>
+                <li class="line-height-style">در منوی "مشتریان"، بهبود و ارتقاء سرعت عملیات های محاسبه و خروجی به اکسل در فرم "جستجوی مشتریان براساس اکسل"</li>
+            </ol>
+            <hr />
+            <h5><strong>تغییرات نسخه 1.19</strong></h5>
+            <ol class="">
+                <li class="line-height-style">در منوی "تنظیم قواعد"، ایجاد زیرمنو و فرم جدید "اختصاص دسته ای قاعده به کاربر"</li>
+                <li class="line-height-style">در منوی "تنظیم قواعد"، ایجاد زیرمنو و فرم جدید "اختصاص مجوز مناطق"</li>
+                <li class="line-height-style">در منوی "کارتابل" و زیرمنو "کارتابل موارد کشف شده" تغییر عنوان دکمه و فرم "نمایش جزئیات" به "گردش حساب"</li>
+                <li class="line-height-style">در منوی "کارتابل" و زیرمنو "کارتابل موارد کشف شده" اضافه شدن دکمه و فرم "اطلاعات خاص حساب"</li>
+                <li class="line-height-style">در منوی "کارتابل" و زیرمنو "کارتابل لیست سیاه مشتریان" تغییر عنوان دکمه و فرم "نمایش جزئیات" به "گردش حساب"</li>
+                <li class="line-height-style">در منوی "مشتریان" و زیرمنو "جستجوی مشتریان براساس اکسل" اضافه شدن و اصلاح عنوان ستون های خروجی اکسل بعد از عملیات محاسبه</li>
+            </ol>
+        </Body>
+    </NazmModal>
+
+</div>
+
+@code {
+    // ********************
+    #region Properties
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+    }
+
+    private async Task LogoutHandlerAsync()
+    {
+        lstNotifications.Clear();
+
+        /* MockData User
+        await myStorage.ClearAsync();
+
+        await utilityClass.ModalCloseAsync(JsRuntime, "modalLogout");
+
+        string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Login>()}";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        */
+
+        var varResult = await UserAuthenticationsService.LogOutAsync();
+
+        if (varResult != null)
+        {
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+
+                await UtilityClass.ModalCloseAsync(JsRuntime, "modalLogout");
+
+                string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Login>()}";
+                NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+        else
+        {
+            var error = new System.Collections.Generic.List<string>();
+            error.Add(Resources.Messages.Errors.InvalidLogin);
+            lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (error, Infrastructure.Enums.MessageType.Error));
+        }
+    }
+
+    #endregion
+}

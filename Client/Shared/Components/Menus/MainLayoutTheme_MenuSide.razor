@@ -1,0 +1,151 @@
+﻿
+@inject Services.Tokens.ITokensService TokensService;
+@inject Services.UserManagesService UserManagesService;
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.MenusService MenusService;
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item nav-profile">
+            <a class="nav-link">
+                <div class="nav-profile-image">
+                    <img src="@(AvatarProperty)" alt="profile">
+                    <span class="login-status online"></span>
+                </div>
+                <div class="nav-profile-text d-flex flex-column">
+                    <span class="font-weight-bold mb-2">@(FullNameProperty)</span>
+                    <span class="text-secondary text-small">@(OrganUnitNameProperty)</span>
+                </div>
+                <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+            </a>
+        </li>
+        @if (lstMenu != null)
+        {
+            @foreach (var menuParent in lstMenu)
+            {
+                if (menuParent.ParentLevel == 0)
+                {
+                    if (menuParent.Url.StartsWith('/'))
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="@($"{menuParent.Url}/{menuParent.MenuId}")">
+                                <span class="menu-title">@(menuParent.Title)</span>
+                                <i class="mdi mdi-@(menuParent.MenuIcon) menu-icon"></i>
+                            </NavLink>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#@(menuParent.Url)" aria-expanded="false" aria-controls="@(menuParent.Url)">
+                                <span class="menu-title">
+                                    @(menuParent.Title)
+                                </span>
+                                <i class="menu-arrow"></i>
+                                <i class="mdi mdi-@(menuParent.MenuIcon) menu-icon"></i>
+                            </a>
+                            <div class="collapse" id="@(menuParent.Url)">
+                                <ul class="nav flex-column sub-menu">
+                                    @foreach (var menu in lstMenu)
+                                    {
+                                        if (menu.ParentLevel > 0 && menu.ParentIdString == $"/{menuParent.MenuId}/")
+                                        {
+                                            <li class="nav-item" title="@(menu.Title)">
+                                                <NavLink class="nav-link" href="@($"{menu.Url}/{menu.MenuId}")">
+                                                    @(menu.Title)
+                                                </NavLink>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                }
+            }
+        }
+    </ul>
+</nav>
+
+@code {
+    // ********************
+    #region Properties
+    
+    private string UserNameProperty { get; set; }
+    private string FullNameProperty { get; set; }
+    private string OrganUnitNameProperty { get; set; }
+    private string AvatarProperty { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    private System.Collections.Generic.IList<ViewModels.Menus.MenuViewModel> lstMenu { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+        /* MockData User
+        UserNameProperty = await myStorage.GetItemAsync<string>(Infrastructure.Utility.Key_UserName);
+
+        Infrastructure.MockData.UserClass user =
+            await
+            UserMockService.GetInstance().findByUserNameAsync(UserNameProperty);
+
+        if (user != null)
+            {
+            FullNameProperty = $"{ user.FullNameGender }";
+
+            OrganUnitNameProperty = $"{user.OrganizationalUnit}";
+
+            AvatarProperty = utilityClass.getAvatar($"{user.Gender}");
+        }
+        */
+
+        System.Guid? userId = await UtilityClass.getUserIdFromTokenAsync(TokensService);
+        if (userId != null)
+        {
+            ViewModels.Users.UserManageViewModel userLoggedIn = await UserManagesService.FindByIdAsync(userId.Value);
+            if (userLoggedIn != null)
+            {
+                FullNameProperty = $"{userLoggedIn.FullNameGender}";
+                OrganUnitNameProperty = $"{userLoggedIn.OrganizationalUnit}";
+                AvatarProperty = await UtilityClass.getAvatarAsync($"{userLoggedIn.Gender}");
+            }
+        }
+
+        await GetUserMenusAsync();
+    }
+
+    private async Task GetUserMenusAsync()
+    {
+        var varResult = await MenusService.GetUserMenusAsync();
+        if (varResult != null)
+        {
+            if (varResult.IsSuccess)
+            {
+                lstMenu = varResult.Value;
+
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+    }
+
+    #endregion
+}

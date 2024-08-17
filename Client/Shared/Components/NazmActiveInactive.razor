@@ -1,0 +1,51 @@
+﻿
+
+    <InputRadioGroup id="@(InputRadioGroupId)" class="form-control" 
+        TValue="bool" Value="@(InputRadioGroupValue)"
+        ValueChanged="@((eventArgs) => OnValueChanged(eventArgs))"
+        ValueExpression="() => InputRadioGroupValue"
+    >
+        <InputRadio id="active" Value="@(true)" />
+        <label for="active">@(Resources.DataDictionary.Active)</label>
+        <InputRadio id="inactive" Value="@(false)" />
+        <label for="inactive">@(Resources.DataDictionary.InActive)</label>
+    </InputRadioGroup>
+
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public bool Model { get; set; }
+
+    [Parameter]
+    public string InputRadioGroupId { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnEventChange { get; set; }
+
+    private bool InputRadioGroupValue { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        InputRadioGroupValue = Model;
+
+    }
+
+    private void OnValueChanged(object value)
+    {
+        InputRadioGroupValue = Convert.ToBoolean(value);
+        var result = OnEventChange.InvokeAsync(InputRadioGroupValue);
+
+    }
+
+    #endregion
+}

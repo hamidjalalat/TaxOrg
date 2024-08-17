@@ -1,0 +1,155 @@
+﻿@page "/Personnels/List"
+
+@inject IJSRuntime JsRuntime;
+@inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
+@inject Services.PersonnelsService PersonnelsService;
+
+<h3>
+	Personnel List
+</h3>
+
+@(strMessage)
+
+@if (lstMain == null)
+{
+	<NazmLoading IsShow="true" />
+}
+else
+{
+	<div class="row">
+		<div class="col">
+			<button type="button" class="btn btn-primary" @onclick="Create">@(Resources.Buttons.Create)</button>
+		</div>
+	</div>
+
+	<hr />
+	<div class="Row">
+		<div class="col table-responsive">
+			<table class="table table-bordered table-sm table-striped table-hover">
+				<thead>
+					<tr>
+						<th>
+							@(Resources.DataDictionary.RowNumber)
+						</th>
+						<th>
+							@(Resources.DataDictionary.Id)
+						</th>
+						<th>
+							@(Resources.DataDictionary.FirstName)
+						</th>
+						<th>
+							@(Resources.DataDictionary.LastName)
+						</th>
+						<th>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int index = 0; index < lstMain.Count; index++)
+					{
+						var item = lstMain[index];
+						<tr>
+							<td>
+								@(index + 1)
+							</td>
+							<td>
+								@(item.Id)
+							</td>
+							<td>
+								@(item.FirstName)
+							</td>
+							<td>
+								@(item.LastName)
+							</td>
+							<td>
+								<button type="button" class="btn btn-warning btn-sm" @onclick="() => Edit(item)">
+									@(Resources.Buttons.Edit)
+								</button>
+								<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteAsync(item)">
+									@(Resources.Buttons.Delete)
+								</button>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		var varResult = await PersonnelsService.GetAsync();
+
+		if (varResult != null)
+		{
+			strMessage = varResult.ToString();
+			if (varResult.IsSuccess)
+				lstMain = varResult.Value;
+		}
+		else
+		{
+			strMessage = "Nothing.........";
+		}
+	}
+
+	public System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel> lstMain { get; set; }
+
+	public string strMessage = "Nothing";
+
+	private void Create()
+	{
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Personnels.Create>() }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	private void Edit(ViewModels.Personnels.PersonnelViewModel viewModel)
+	{
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Personnels.Edit>() }/{ viewModel.Id }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	private async Task DeleteAsync(ViewModels.Personnels.PersonnelViewModel viewModel)
+	{
+		bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the personnel : '{ viewModel.FirstName } { viewModel.LastName }'?");
+		if (confirmed)
+		{
+			await PersonnelsService.DeleteAsync(viewModel.Id.Value);
+
+			var varResult = await PersonnelsService.GetAsync();
+			if (varResult != null)
+			{
+				if (varResult.IsSuccess)
+					lstMain = varResult.Value;
+			}
+		}
+
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Personnels.List>() }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	public void Dispose()
+	{
+
+	}
+
+	//protected override bool ShouldRender()
+	//{
+	//    bool isShouldRender = base.ShouldRender();
+
+	//    Console.WriteLine(nameof(isShouldRender) + $" - ShouldRender : {isShouldRender}");
+
+	//    return isShouldRender;
+		//}
+
+	//protected override void OnAfterRender(bool firstRender)
+	//{
+	//    //base.OnAfterRender(firstRender);
+
+	//    Console.WriteLine(nameof(OnAfterRender) + $" - First Render : {firstRender}");
+		//}
+
+}

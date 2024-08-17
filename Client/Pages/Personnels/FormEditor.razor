@@ -1,0 +1,72 @@
+﻿@inject NavigationManager NavigationManager
+
+<EditForm Model="Model" OnValidSubmit="HandleValidSubmitAsync">
+	<ValidationSummary />
+	<FluentValidationValidator />
+	<DataAnnotationsValidator />
+
+@*	<div class="form-group form-check">
+		<InputCheckbox id="isActive" class="form-check-input" @bind-Value="Model.FirstName" />
+		<label class="form-check-label" for="isActive">@(Resources.DataDictionary.IsActive)</label>
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.IsActive" />
+		</div>
+	</div>*@
+
+
+	<div class="form-group">
+		<label for="firstname">@(Resources.DataDictionary.FirstName)</label>
+		<InputText id="firstname" class="form-control" @bind-Value="Model.FirstName" />
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.FirstName" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="lastname">@(Resources.DataDictionary.LastName)</label>
+		<InputText id="lastname" class="form-control" @bind-Value="Model.LastName" />
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.LastName" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary">
+			@if (Type == Infrastructure.Enums.EditFormType.Create)
+			{
+				@(Resources.Buttons.Create)
+			}
+			else
+			{
+				@(Resources.Buttons.Save)
+			}
+		</button>
+		<button type="reset" class="btn btn-secondary">@(Resources.Buttons.Reset)</button>
+
+		<button type="button" class="btn btn-danger" @onclick="ReturnToList">@(Resources.Buttons.Return)</button>
+	</div>
+</EditForm>
+
+@code
+{
+	[Parameter]
+	public ViewModels.Personnels.PersonnelViewModel Model { get; set; }
+
+	[Parameter]
+	public Infrastructure.Enums.EditFormType Type { get; set; }
+
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
+
+	private void HandleValidSubmitAsync()
+	{
+		var result = OnValidSubmit.InvokeAsync(null);
+	}
+
+	private void ReturnToList()
+    {
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Personnels.List>() }";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+    }
+
+}

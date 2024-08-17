@@ -1,0 +1,248 @@
+﻿@inject NavigationManager NavigationManager
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+<div>
+    <div class="mr-5">
+        <EditForm Model="Model" OnValidSubmit="HandleValidSubmitAsync">
+            <FluentValidationValidator />
+            <DataAnnotationsValidator />
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">@(Resources.DataDictionary.FirstName) :</label>
+                        <NazmInputText UniqueId="firstName"
+                                     CSS="form-control"
+                                     ValueProperty="@(Model.FirstName)"
+                                     ValueChangedEventHandler="OnFirstNameTextBoxValueChanged" />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.FirstName" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">@(Resources.DataDictionary.LastName) :</label>
+                        <NazmInputText UniqueId="lastName"
+                                     CSS="form-control"
+                                     ValueProperty="@(Model.LastName)"
+                                     ValueChangedEventHandler="OnLastNameTextBoxValueChanged" />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.LastName" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="nationalCode" class="form-label">@(Resources.DataDictionary.NationalCode) :</label>
+                        <NazmInputText UniqueId="nationalCode"
+                                     CSS="form-control"
+                                     ValueProperty="@(Model.NationalCode)"
+                                     ValueChangedEventHandler="OnNationalCodeTextBoxValueChanged" />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.NationalCode" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">@(Resources.DataDictionary.Gender) :</label>
+                        <NazmDropDown UniqueId="gender" CSS="form-control"
+                                      IsAllowClear="true" IsAllowFiltering="true" Placeholder="@(Resources.Messages.Validations.PleaseSelectOne)"
+                                      ValueProperty="Id" TextProperty="Title"
+                                      DataItems="@(cmbGender)" BindValue="selectedGender"
+                                      TItem="Infrastructure.ComboClass" TResult="int"
+                                      ValueChangedEventHandler="OnGenderChanged" />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.Gender" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 ">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">@(Resources.DataDictionary.EmailAddress) :</label>
+                        <NazmInputText UniqueId="email"
+                                     CSS="form-control"
+                                     ValueProperty="@(Model.Email)"
+                                     ValueChangedEventHandler="OnEmailTextBoxValueChanged" />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.Email" />
+                        </div>
+                    </div>
+                </div>
+
+                @if (Type == Infrastructure.Enums.EditFormType.Create)
+                {
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <hr />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">@(Resources.DataDictionary.UserName) :</label>
+                            <NazmInputText UniqueId="userName"
+                                         CSS="form-control"
+                                         ValueProperty="@(Model.UserName)"
+                                         ValueChangedEventHandler="OnUserNameTextBoxValueChanged" />
+                            <div class="form-control-validation">
+                                <ValidationMessage For="() => Model.UserName" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">@(Resources.DataDictionary.Password) :</label>
+                            <input type="password" id="newPassword" class="form-control" @bind-value="Model.Password" />
+                            <div class="form-control-validation">
+                                <ValidationMessage For="() => Model.Password" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">@(Resources.DataDictionary.ConfirmNewPassword) :</label>
+                            <input type="password" id="confirmPassword" class="form-control" @bind-value="Model.ConfirmPassword" />
+                            <div class="form-control-validation">
+                                <ValidationMessage For="() => Model.ConfirmPassword" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <div class="mb-3 float-start">
+                <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Return)" @onclick="ReturnToList">
+                    <i class="@(Resources.ButtonsIcon.Return) @(Resources.DefaultValues.IconSize24)"></i>
+                </button>
+
+                <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)">
+                    <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                </button>
+
+                @if (Errors != null)
+                {
+                    <hr />
+                    <div class="alert alert-danger" role="alert">
+                        @(Errors)
+                    </div>
+                }
+            </div>
+
+        </EditForm>
+    </div>
+</div>
+
+
+@code
+{
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    [Parameter]
+    public ViewModels.Users.UserManageViewModel Model { get; set; }
+
+    [Parameter]
+    public Infrastructure.Enums.EditFormType Type { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    public IList<string> Errors { get; set; }
+
+    private int? selectedGender { get; set; }
+
+    IEnumerable<Infrastructure.ComboClass> cmbGender { get; set; }
+
+
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var lstCombo = await UtilityClass.getGenderType1Async();
+        if (lstCombo != null)
+        {
+            cmbGender = lstCombo;
+        }
+
+        if (Type == Infrastructure.Enums.EditFormType.Edit)
+        {
+            selectedGender = ((Model.Gender).ToString() == "Male" ? cmbGender.FirstOrDefault(p => p.Id == 1).Id : cmbGender.FirstOrDefault(p => p.Id == 2).Id);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+    }
+
+    private async Task OnFirstNameTextBoxValueChanged(string value)
+    {
+        Model.FirstName = value;
+    }
+
+    private async Task OnLastNameTextBoxValueChanged(string value)
+    {
+        Model.LastName = value;
+    }
+
+    private async Task OnNationalCodeTextBoxValueChanged(string value)
+    {
+        Model.NationalCode = value;
+    }
+
+    private void OnGenderChanged(dynamic value)
+    {
+        selectedGender = value;
+    }
+
+    private async Task OnEmailTextBoxValueChanged(string value)
+    {
+        Model.Email = value;
+    }
+
+    private async Task OnUserNameTextBoxValueChanged(string value)
+    {
+        Model.UserName = value;
+    }
+
+    private void HandleValidSubmitAsync()
+    {
+        Model.Gender = selectedGender == 1 ? Domain.Enums.GenderTypeEnum.Male : Domain.Enums.GenderTypeEnum.Female;
+
+        var result = OnValidSubmit.InvokeAsync();
+    }
+
+    private void ReturnToList()
+    {
+        string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Users.List>()}/{refMenuId.Value}";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+    }
+    #endregion
+}

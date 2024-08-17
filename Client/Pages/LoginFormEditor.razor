@@ -1,0 +1,138 @@
+﻿@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager;
+
+<div class="card mt-5 mb-5">
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-lg-5 text-center mb-5">
+            @* <img src="./content/Images/Login.png" class="img-fluid" alt="ورود به سامانه" /> *@
+            <img src="./content/images/fdms.jpg" class="img-fluid" alt="ورود به سامانه" />
+            <div class="line-height-style mp-5" style="border-top: 1px dotted;">
+                <h2 class="h1 font-bold-style mt-5 tejaratbank-color">F.D.M.S</h2>
+                <h3><strong class="h2 font-bold-style tejaratbank-color">F</strong>raud</h3>
+                <h3><strong class="h2 font-bold-style tejaratbank-color">D</strong>etection</h3>
+                <h3><strong class="h2 font-bold-style tejaratbank-color">M</strong>anagement</h3>
+                <h3><strong class="h2 font-bold-style tejaratbank-color">S</strong>ystem</h3>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card-body">
+                <EditForm Model="@(Model)" OnValidSubmit="HandleValidSubmitAsync" OnInvalidSubmit="HandleInvalidSubmitAsync">
+                    <!--<ValidationSummary />-->
+                    <FluentValidationValidator />
+                    <DataAnnotationsValidator />
+
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="lblUsername">@(Resources.DataDictionary.UserName)</span>
+                            <NazmInputText UniqueId="Username"
+                                           CSS="form-control ltr-style"
+                                           ValueProperty="@(Model.UserName)"
+                                           Placeholder="@(Resources.DataDictionary.UserName)"
+                                           ValueChangedEventHandler="OnUserNameTextBoxValueChanged"
+                                           AdditionalAttributes='@(new Dictionary<string, object>() {
+                                             { "aria-label", "Sizing example input"}, {"aria-describedby", "lblUsername" }
+                                         })' />
+                        </div>
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.UserName" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="lblPassword">@(Resources.DataDictionary.Password)</span>
+                            <NazmInputText UniqueId="Password"
+                                           CSS="form-control ltr-style"
+                                           Type="password"
+                                           ValueProperty="@(Model.Password)"
+                                           Placeholder="@(Resources.DataDictionary.Password)"
+                                           ValueChangedEventHandler="OnPasswordTextBoxValueChanged"
+                                           AdditionalAttributes='@(new Dictionary<string, object>() {
+                                             { "aria-label", "Sizing example input"}, {"aria-describedby", "lblPassword" }
+                                         })' />
+                        </div>
+                        <div class="form-control-validation">
+                            <ValidationMessage For="() => Model.Password" />
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3 float-start">
+                        <button type="submit" class="btn btn-primary btn-sm btn-width-100" title="@(Resources.Buttons.Login)">
+                            <i class="@(Resources.ButtonsIcon.Login) @(Resources.DefaultValues.IconSize24)"></i>
+                        </button>
+
+                        <button type="reset" class="btn btn-secondary btn-sm btn-width-100" title="@(Resources.Buttons.Reset)">
+                            <i class="@(Resources.ButtonsIcon.Reset) @(Resources.DefaultValues.IconSize24)"></i>
+                        </button>
+
+                        @if (string.IsNullOrWhiteSpace(Errors) == false)
+                        {
+                            <hr />
+                            <div class="alert alert-danger" role="alert">
+                                @(Errors)
+                            </div>
+                        }
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter]
+    //public Infrastructure.MockData.UserClass Model { get; set; }
+    public ViewModels.Users.UserAuthenticationLoginViewModel Model { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    public string Errors { get; set; }
+
+    //bool displayValidationErrorMessages = false;
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    //private async Task HandleValidSubmitAsync(EditContext context)
+    //{
+    //    await Task.Run(() =>
+    //    {
+    //        //displayValidationErrorMessages = false;
+    //        var result = OnValidSubmit.InvokeAsync(null);
+    //    });
+    //}
+
+    private async Task OnUserNameTextBoxValueChanged(string value)
+    {
+        Model.UserName = value;
+    }
+
+    private async Task OnPasswordTextBoxValueChanged(string value)
+    {
+        Model.Password = value;
+    }
+
+    private void HandleValidSubmitAsync(EditContext context)
+    {
+        //displayValidationErrorMessages = false;
+        var result = OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task HandleInvalidSubmitAsync(EditContext context)
+    {
+        await Task.Run(() =>
+        {
+            //Errors = null;
+            //displayValidationErrorMessages = true;
+        });
+    }
+
+    #endregion
+}

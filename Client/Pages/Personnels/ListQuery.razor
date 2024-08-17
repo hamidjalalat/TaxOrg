@@ -1,0 +1,95 @@
+﻿@page "/Personnels/ListQuery"
+
+@inject IJSRuntime JsRuntime;
+@inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
+@inject Services.PersonnelsService PersonnelsService;
+
+<h3>
+	Personnel List Query
+</h3>
+
+@(strMessage)
+
+@if (lstMain == null)
+{
+	<div>
+		Loading...
+	</div>
+}
+else
+{
+	<div class="Row">
+		<div class="col table-responsive">
+			<table class="table table-bordered table-sm table-striped table-hover">
+				<thead>
+					<tr>
+						<th>
+							@(Resources.DataDictionary.RowNumber)
+						</th>
+						<th>
+							@(Resources.DataDictionary.Id)
+						</th>
+						<th>
+							@(Resources.DataDictionary.FirstName)
+						</th>
+						<th>
+							@(Resources.DataDictionary.LastName)
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int index = 0; index < lstMain.Count; index++)
+					{
+						var item = lstMain[index];
+						<tr>
+							<td>
+								@(index + 1)
+							</td>
+							<td>
+								@(item.Id)
+							</td>
+							<td>
+								@(item.FirstName)
+							</td>
+							<td>
+								@(item.LastName)
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		var varResult = await PersonnelsService.GetQueryAsync();
+
+		if (varResult != null)
+		{
+			strMessage = varResult.ToString();
+			if (varResult.IsSuccess)
+				lstMain = varResult.Value;
+		}
+		else
+		{
+			strMessage = "Nothing.........";
+		}
+	}
+
+	public System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel> lstMain { get; set; }
+
+	public string strMessage = "Nothing";
+
+
+	public void Dispose()
+	{
+
+	}
+
+}
+

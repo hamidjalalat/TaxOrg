@@ -1,0 +1,146 @@
+﻿@page "/Menus/Edit/{refMenuId:int?}/{Id:int?}"
+
+@inject NavigationManager NavigationManager;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.MenusService MenusService;
+
+@if (IsFormLoading)
+{
+	<NazmLoading IsShow="true"  />
+}
+else
+{
+
+	@if (IsFormProgressing)
+	{
+		<NazmLoadingProgress IsShow="true" />
+	}
+
+	@if (refMenuId != null && Id != null)
+	{
+		<FormEditor Model="Model"
+			OnValidSubmit="OnSubmitAsync"
+			Type="Infrastructure.Enums.EditFormType.Edit"
+			refMenuId="refMenuId">
+		</FormEditor>
+
+	}
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+@code
+{
+	// ********************
+	#region Properties
+
+	[Parameter]
+	public int? refMenuId { get; set; }
+
+	[Parameter]
+	public int? Id { get; set; }
+
+	public bool IsFormLoading { get; set; }
+	public bool IsFormProgressing { get; set; }
+
+	private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+
+	public ViewModels.Menus.MenuViewModel Model { get; set; }
+	private ViewModels.Menus.MenuUpdateViewModel NewModel { get; set; }
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	protected override async Task OnInitializedAsync()
+	{
+		IsFormLoading = true;
+		// ********************
+
+		await base.OnInitializedAsync();
+
+		Model =
+			new ViewModels.Menus.MenuViewModel();
+
+		lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+		// ********************
+		IsFormLoading = false;
+
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		IsFormLoading = true;
+		// ********************
+
+		try
+		{
+			if (refMenuId != null && Id != null)
+				Model = await MenusService.FindByIdAsync(Id.Value);
+		}
+		catch (Exception ex)
+		{
+			string str = ex.Message;
+		}
+
+		// ********************
+		IsFormLoading = false;
+	}
+
+	private async Task OnSubmitAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		bool flagResult = await SaveAsync();
+
+		if (flagResult)
+		{
+			string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Menus.List>()}/{refMenuId.Value}";
+			NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		}
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task<bool> SaveAsync()
+	{
+		NewModel = new ViewModels.Menus.MenuUpdateViewModel()
+		{
+			MenuId = Model.MenuId,
+			PageTitle = Model.PageTitle,
+			PageDescription = Model.PageDescription,
+			Sort = Model.Sort,
+			IsVisible = Model.IsVisible,
+		};
+
+		var varResult = await MenusService.PutAsync(NewModel);
+		bool flagReturn = false;
+		if (varResult != null)
+		{
+			lstNotifications.Clear();
+			flagReturn = varResult.IsSuccess;
+			if (varResult.IsSuccess)
+			{
+				if (varResult.Successes.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Successes, Infrastructure.Enums.MessageType.Success));
+			}
+			if (varResult.IsFailed)
+			{
+				if (varResult.Errors.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Errors, Infrastructure.Enums.MessageType.Error));
+			}
+		}
+
+		return flagReturn;
+	}
+
+	#endregion
+}

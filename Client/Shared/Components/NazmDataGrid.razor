@@ -1,0 +1,88 @@
+﻿@using System.Reflection
+
+@typeparam TViewModel
+
+@if (DataGridColumns != null)
+{
+	<RadzenDataGrid Data="@(DataList)" TItem="TViewModel"
+				AllowColumnResize="true"
+				AllowFiltering="true" FilterMode="FilterMode.Advanced" LogicalFilterOperator="LogicalFilterOperator.Or"
+				AllowSorting="true" AllowPaging="true" PageSize="@(intPageSize)" ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Left">
+
+		<EmptyTemplate>
+			<NazmDataGridEmptyTemplate />
+		</EmptyTemplate>
+
+		<Columns>
+			<RadzenDataGridColumn TItem="TViewModel" Title="#" Width="50px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+				<Template Context="itemData">
+					@(DataList.IndexOf(itemData) + 1)
+				</Template>
+			</RadzenDataGridColumn>
+			@{
+				foreach (var column in DataGridColumns)
+				{
+					<RadzenDataGridColumn TItem="TViewModel" Property="@(column.Key)" Title="@(column.Value)" Type="typeof(TViewModel)" />
+				}
+			}
+		</Columns>
+	</RadzenDataGrid>
+
+	@*<RadzenDataGrid @bind-Value=@selectedItems Data="@data" TItem="IDictionary<string, object>" ColumnWidth="200px"
+				AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true">
+		<Columns>
+			@foreach (var column in columns)
+			{
+				<RadzenDataGridColumn TItem="IDictionary<string, object>" Title="@column.Key" Type="column.Value"
+							  Property="@GetColumnPropertyExpression(column.Key, column.Value)">
+					<Template>
+						@context[@column.Key]
+					</Template>
+				</RadzenDataGridColumn>
+			}
+		</Columns>
+	</RadzenDataGrid>*@
+}
+else
+{
+	<NazmLoading IsShow="true" />
+}
+
+@code {
+
+	private int intPageSize = 5;
+
+	//[Parameter]
+	//public System.Collections.Generic.IList<TViewModel> DataList { get; set; }
+
+	//[Parameter]
+	//public System.Collections.Generic.IDictionary<string, string> DataGridColumns { get; set; }
+
+	////[Parameter]
+	////public RenderFragment ColumnsContent { get; set; }
+
+	//IList<IDictionary<string, TViewModel>> selectedItems;
+
+	[Parameter]
+	//public IEnumerable<IDictionary<string, TViewModel>> DataList { get; set; }
+	public IList<TViewModel> DataList { get; set; }
+
+	[Parameter]
+	public IDictionary<string, string> DataGridColumns { get; set; }
+
+	public string GetColumnPropertyExpression(string name, string type)
+	{
+		var expression = $@"it[""{name}""].ToString()";
+
+		//if (type == typeof(int))
+		//{
+		//	return $"int.Parse({expression})";
+		//}
+		//else if (type == typeof(DateTime))
+		//{
+		//	return $"DateTime.Parse({expression})";
+		//}
+
+		return expression;
+	}
+}

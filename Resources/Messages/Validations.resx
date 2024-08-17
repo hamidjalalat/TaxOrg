@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Acn" xml:space="preserve">
+    <value>شماره پذیرنده فروشگاهی</value>
+  </data>
+  <data name="ActionConfirm" xml:space="preserve">
+    <value>آیا از عملیات {0} مطمئن هستید؟</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>آدرس</value>
+  </data>
+  <data name="Bbc" xml:space="preserve">
+    <value>کد شعبه خریدار</value>
+  </data>
+  <data name="Bid" xml:space="preserve">
+    <value>شناسه ملی(Bid)</value>
+  </data>
+  <data name="Bpc" xml:space="preserve">
+    <value>کد پستی خریدار(bpc)</value>
+  </data>
+  <data name="Bpn" xml:space="preserve">
+    <value>شماره گذرنامه خریدار</value>
+  </data>
+  <data name="Bros" xml:space="preserve">
+    <value>حق العمل</value>
+  </data>
+  <data name="Bsrn" xml:space="preserve">
+    <value>شناسه یکتای ثبت قرارداد حق العمل  کاری</value>
+  </data>
+  <data name="ConcurrencyFailure" xml:space="preserve">
+    <value>خطای همزمانی رخ داده است</value>
+  </data>
+  <data name="Consfee" xml:space="preserve">
+    <value>اجرت ساخت</value>
+  </data>
+  <data name="Cop" xml:space="preserve">
+    <value>سهم نقدی از پرداخت</value>
+  </data>
+  <data name="Crn" xml:space="preserve">
+    <value>شناسه یکتای ثبت  قرارداد فروشنده</value>
+  </data>
+  <data name="Cut" xml:space="preserve">
+    <value>نوع ارز</value>
+  </data>
+  <data name="DefaultError" xml:space="preserve">
+    <value>خطای پیشبینی نشده رخ داد</value>
+  </data>
+  <data name="Dis" xml:space="preserve">
+    <value>مبلغ تخفیف(Dis)</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>{0} [{1}] تکراری است و توسط شخص دیگری انتخاب شده است، لطفا از {0} دیگری استفاده نمایید.</value>
+  </data>
+  <data name="DuplicateRoleName" xml:space="preserve">
+    <value>نقش {0} قبلا ثبت شده است</value>
+  </data>
+  <data name="Fee" xml:space="preserve">
+    <value>قیمت(Fee)</value>
+  </data>
+  <data name="FileEmpty" xml:space="preserve">
+    <value>فایلی وجود ندارد</value>
+  </data>
+  <data name="FileExcelColumnDuplicate" xml:space="preserve">
+    <value>ستون {0} تکراری است</value>
+  </data>
+  <data name="FileExcelColumnsCount" xml:space="preserve">
+    <value>تعداد ستون های تطبیق داده شده برابر نیست</value>
+  </data>
+  <data name="FileExcelRow" xml:space="preserve">
+    <value>خطا در ردیف شماره {0} وجود دارد</value>
+  </data>
+  <data name="FileExcelRowColumn" xml:space="preserve">
+    <value>خطا در ردیف شماره {0} و ستون شماره {1} وجود دارد</value>
+  </data>
+  <data name="FileInvalid" xml:space="preserve">
+    <value>فایل ارسالی معتبر نمی باشد</value>
+  </data>
+  <data name="FileMaxSize" xml:space="preserve">
+    <value>حجم فایل ارسالی نباید از {0} {1} بیشتر باشد</value>
+  </data>
+  <data name="FileRead" xml:space="preserve">
+    <value>خواندن فایل با مشکل مواجه شد</value>
+  </data>
+  <data name="FileSelected" xml:space="preserve">
+    <value>لطفا یک فایل {0} انتخاب کنید</value>
+  </data>
+  <data name="FileZero" xml:space="preserve">
+    <value>فایل انتخابی قادر به ارسال نمی باشد</value>
+  </data>
+  <data name="FixLengthNumeric" xml:space="preserve">
+    <value>مقدار فیلد {0} باید دقیقا {1} رقم باشد!</value>
+  </data>
+  <data name="GreaterThanOrEqualTo_FieldValue" xml:space="preserve">
+    <value>مقدار فیلد {0} باید بزرگ‌تر یا مساوی {1} باشد!</value>
+  </data>
+  <data name="GreaterThanOrEqualTo_TwoFields" xml:space="preserve">
+    <value>مقدار فیلد {0} باید بزرگ‌تر یا مساوی مقدار فیلد {1} باشد!</value>
+  </data>
+  <data name="GreaterThan_FieldValue" xml:space="preserve">
+    <value>مقدار فیلد {0} باید بزرگ‌تر از {1} باشد!</value>
+  </data>
+  <data name="GreaterThan_TwoFields" xml:space="preserve">
+    <value>مقدار فیلد {0} باید بزرگ‌تر از مقدار فیلد {1} باشد!</value>
+  </data>
+  <data name="Iinn" xml:space="preserve">
+    <value>شماره سوییچ پرداخت</value>
+  </data>
+  <data name="Inno" xml:space="preserve">
+    <value>شماره صورت حساب(Inno)</value>
+  </data>
+  <data name="Ins" xml:space="preserve">
+    <value>موضوع صورتحساب(Ins)</value>
+  </data>
+  <data name="InsertTime" xml:space="preserve">
+    <value>هنگام ثبت</value>
+  </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>کد {0} صحیح نمی‌باشد!</value>
+  </data>
+  <data name="InvalidProperty" xml:space="preserve">
+    <value> {0} معتبر نیست!</value>
+  </data>
+  <data name="InvalidRoleName" xml:space="preserve">
+    <value>نقش {0} معتبر نیست</value>
+  </data>
+  <data name="InvalidValue" xml:space="preserve">
+    <value>مقدار {0} معتبر نمی‌باشد!</value>
+  </data>
+  <data name="Irtaxid" xml:space="preserve">
+    <value>شماره منحصر به فرد مالیاتی  صورتحساب مرجع</value>
+  </data>
+  <data name="ItemSelected" xml:space="preserve">
+    <value>لطفا یک {0} انتخاب کنید</value>
+  </data>
+  <data name="LessThan_FieldValue" xml:space="preserve">
+    <value>مقدار فیلد {0} باید کوچکتر‌ از {1} باشد!</value>
+  </data>
+  <data name="LoginAlreadyAssociated" xml:space="preserve">
+    <value>از قبل اکانت خارجی به حساب این کاربر متصل اصت</value>
+  </data>
+  <data name="MaxLength" xml:space="preserve">
+    <value>طول فیلد {0} می‌تواند حداکثر {1} کاراکتر باشد!</value>
+  </data>
+  <data name="MessageDelete" xml:space="preserve">
+    <value>آیا مطمئن هستید که می خواهید {0} را حذف کنید؟</value>
+  </data>
+  <data name="MessageLogout" xml:space="preserve">
+    <value>آیا از خروج مطمئن هستید؟</value>
+  </data>
+  <data name="MinLength" xml:space="preserve">
+    <value>طول فیلد {0} باید حداقل {1} کاراکتر باشد!</value>
+  </data>
+  <data name="Mu" xml:space="preserve">
+    <value>واحد اندازهگیری</value>
+  </data>
+  <data name="NotEqual" xml:space="preserve">
+    <value>تکرار رمز عبور با رمز عبور جدید برابر نمی باشد</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>{0} یافت نشد!</value>
+  </data>
+  <data name="Odam" xml:space="preserve">
+    <value>مبلغ سایرمالیات و عوارض</value>
+  </data>
+  <data name="Odr" xml:space="preserve">
+    <value>رخ سایرمالیات و عوارض</value>
+  </data>
+  <data name="Odt" xml:space="preserve">
+    <value>موضوع سایرمالیات و عوارض</value>
+  </data>
+  <data name="Olt" xml:space="preserve">
+    <value>موضوع سایر وجوه قانونی</value>
+  </data>
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>قبلی صحیح نمی‌باشد!</value>
+  </data>
+  <data name="PasswordRequiresDigit" xml:space="preserve">
+    <value>باید حداقل دارای یک عدد باشد</value>
+  </data>
+  <data name="PasswordRequiresLower" xml:space="preserve">
+    <value>باید حداقل دارای یک کاراکتر انگلیسی کوچک باشد ('a'-'z')</value>
+  </data>
+  <data name="PasswordRequiresNonAlphanumeric" xml:space="preserve">
+    <value>باید حداقل دارای یک کاراکتر ویژه باشد مثل '@#%^&amp;'</value>
+  </data>
+  <data name="PasswordRequiresUniqueChars" xml:space="preserve">
+    <value>باید حداقل دارای {0} کاراکتر منحصر به فرد باشد</value>
+  </data>
+  <data name="PasswordRequiresUpper" xml:space="preserve">
+    <value>باید حداقل دارای یک کاراکتر انگلیسی بزرگ باشد ('A'-'Z')</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>نباید کمتر از {0} کاراکتر باشد</value>
+  </data>
+  <data name="Pcn" xml:space="preserve">
+    <value>شماره کارت پرداخت کننده صورتحساب</value>
+  </data>
+  <data name="Pdt" xml:space="preserve">
+    <value>تاریخ و زمان پرداخت</value>
+  </data>
+  <data name="Pid" xml:space="preserve">
+    <value>شماره/شناسه ملی/کد فراگیر اتباع غیر ایرانی پرداخت کننده صورتحساب</value>
+  </data>
+  <data name="PleaseSelectOne" xml:space="preserve">
+    <value>لطفا یک مورد را انتخاب کنید . . .</value>
+  </data>
+  <data name="Pmt" xml:space="preserve">
+    <value>روش پرداخت</value>
+  </data>
+  <data name="PolicyNo" xml:space="preserve">
+    <value>شماره بیمه نامه</value>
+  </data>
+  <data name="Range" xml:space="preserve">
+    <value>مقدار فیلد {0} باید بزرگ‌تر یا مساوی {1} و کوچک‌تر یا مساوی {2} باشد.</value>
+  </data>
+  <data name="RegularExpression" xml:space="preserve">
+    <value>مقدار {0} معتبر نمی‌باشد!</value>
+  </data>
+  <data name="Repetitive" xml:space="preserve">
+    <value>{0} تکراری است! لطفا از {0} دیگری استفاده نمایید.</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>تکمیل {0} الزامی است!</value>
+  </data>
+  <data name="Sbc" xml:space="preserve">
+    <value>کد شعبه فروشنده</value>
+  </data>
+  <data name="Scc" xml:space="preserve">
+    <value>کد گمرک محل اظهار فروشنده</value>
+  </data>
+  <data name="Scln" xml:space="preserve">
+    <value>شماره پروانه  گمرکی</value>
+  </data>
+  <data name="SelectedId" xml:space="preserve">
+    <value>{0} برای ویرایش انتخاب نشده است</value>
+  </data>
+  <data name="Sstid" xml:space="preserve">
+    <value>شناسه کالا(Sstid)</value>
+  </data>
+  <data name="Sstt" xml:space="preserve">
+    <value>شرح کالا(Sstt)</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>وضعیت</value>
+  </data>
+  <data name="Taxid" xml:space="preserve">
+    <value>شماره منحصر به فرد مالیاتی</value>
+  </data>
+  <data name="Tinb" xml:space="preserve">
+    <value>شماره اقتصادی خریدار</value>
+  </data>
+  <data name="Tins" xml:space="preserve">
+    <value>شماره اقتصادی فروشنده</value>
+  </data>
+  <data name="Trmn" xml:space="preserve">
+    <value>شماره پایانه</value>
+  </data>
+  <data name="Trn" xml:space="preserve">
+    <value>شماره پیگیری/شماره مرجع</value>
+  </data>
+  <data name="UserAlreadyHasPassword" xml:space="preserve">
+    <value>کاربر از قبل {0} دارد</value>
+  </data>
+  <data name="UserAlreadyInRole" xml:space="preserve">
+    <value>کاربر مورد نظر در نقش '{0}' است</value>
+  </data>
+  <data name="UserLockoutNotEnabled" xml:space="preserve">
+    <value>قابلیت قفل اکانت کاربر فعال نیست</value>
+  </data>
+  <data name="UserNotInRole" xml:space="preserve">
+    <value>کاربر مورد نظر در نقش '{0}' نیست</value>
+  </data>
+  <data name="Vra" xml:space="preserve">
+    <value>نرخ مالیات بر ارزش افزوده(Vra)</value>
+  </data>
+</root>

@@ -1,0 +1,72 @@
+﻿
+<InputText id="@(UniqueId)" class="@(CSS)" style="@(Style)" placeholder="@(Placeholder)" type="@(Type)"
+           Value="@(ValueProperty)" ValueChanged="@((eventArgs) => OnValueChanged(eventArgs))" ValueExpression="() => ValueProperty"
+           maxlength="@(MaxLength)" readonly="@(IsReadOnly)" autocomplete="@(autoCompleteValue)" @attributes="AdditionalAttributes" />
+
+
+
+
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter, EditorRequired]
+    public string UniqueId { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public string Type { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
+
+    [Parameter]
+    public string ValueProperty { get; set; }
+
+    [Parameter]
+    public int MaxLength { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
+    [Parameter]
+    public bool IsAutoComplete { get; set; }
+    private string autoCompleteValue { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChangedEventHandler { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Placeholder = (Placeholder == null) ? string.Empty : Placeholder;
+
+        MaxLength = (MaxLength == 0) ? 100 : MaxLength;
+
+        autoCompleteValue = (IsAutoComplete) ? "on" : "off";
+
+    }
+
+    private async Task OnValueChanged(string value)
+    {
+        await ValueChangedEventHandler.InvokeAsync(value);
+    }
+
+    #endregion
+}

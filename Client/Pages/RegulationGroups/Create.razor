@@ -1,0 +1,126 @@
+﻿@page "/RegulationGroups/Create/{refMenuId:int?}"
+
+@inject NavigationManager NavigationManager;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.RegulationGroupsService RegulationGroupsService;
+
+
+@if (IsFormLoading)
+{
+    <NazmLoading IsShow="true" />
+}
+else
+{
+
+    @if (IsFormProgressing)
+    {
+        <NazmLoadingProgress IsShow="true"/>
+    }
+
+    @if (refMenuId != null)
+    {
+        <FormEditor Model="Model"
+            OnValidSubmit="OnSubmitAsync"
+            Type="Infrastructure.Enums.EditFormType.Create"
+            refMenuId="refMenuId">
+        </FormEditor>
+
+    }
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+
+
+@code
+{
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    public bool IsFormLoading { get; set; }
+    public bool IsFormProgressing { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+
+    public ViewModels.RegulationGroups.RegulationGroupViewModel Model { get; set; }
+    private ViewModels.RegulationGroups.RegulationGroupCreateViewModel NewModel { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsFormLoading = true;
+        // ********************
+        await base.OnInitializedAsync();
+        Model =
+        new ViewModels.RegulationGroups.RegulationGroupViewModel()
+        {
+                IsActive = true,
+        };
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+        // ********************
+        IsFormLoading = false;
+
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+        bool flagResult = await SaveAsync();
+        if (flagResult)
+        {
+            string uri = $"{Infrastructure.Utility.setUri<Client.Pages.RegulationGroups.List>()}/{refMenuId.Value}";
+            NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        }
+        // ********************
+        IsFormProgressing = false;
+
+    }
+
+    private async Task<bool> SaveAsync()
+    {
+        NewModel = new ViewModels.RegulationGroups.RegulationGroupCreateViewModel()
+        {
+            Title = Model.Title,
+            Sort = Model.Sort,
+            Code = Model.Code,
+            IsActive = Model.IsActive,
+        };
+
+        var varResult = await RegulationGroupsService.PostAsync(NewModel);
+        bool flagReturn = false;
+        if (varResult != null)
+        {
+
+            lstNotifications.Clear();
+            flagReturn = varResult.IsSuccess;
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        return flagReturn;
+    }
+
+    #endregion
+}

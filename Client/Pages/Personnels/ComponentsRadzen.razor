@@ -1,0 +1,97 @@
+﻿@page "/Personnels/ComponentsRadzen"
+
+@using Radzen
+@using Radzen.Blazor
+
+@inject Services.PersonnelsService PersonnelsService;
+
+<NazmLoading IsShow="@((lstMain == null) ? true : false)" />
+
+@if (lstMain != null)
+{
+	<h3>Components Radzen</h3>
+
+	<hr />
+	<h4>DataGrid</h4>
+	<RadzenDataGrid id="gvMain" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+				Data="@lstMain" TItem="ViewModels.Personnels.PersonnelViewModel" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="ViewModels.Personnels.PersonnelViewModel" Property="Id" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" />
+			@*<RadzenDataGridColumn TItem="Employee" Title="Photo" Frozen="true" Sortable="false" Filterable="false" Width="60px">
+		<Template Context="data">
+		<RadzenImage Path="@data.Photo" style="width: 40px; height: 40px; border-radius: 8px;" />
+		</Template>
+		</RadzenDataGridColumn>*@
+			<RadzenDataGridColumn TItem="ViewModels.Personnels.PersonnelViewModel" Property="FirstName" Title="First Name" Frozen="true" />
+			<RadzenDataGridColumn TItem="ViewModels.Personnels.PersonnelViewModel" Property="LastName" Title="Last Name" />
+		</Columns>
+	</RadzenDataGrid>
+
+	<hr />
+	<label>@(strDropDownDataGrid)</label>
+	<h4>DropDownDataGrid</h4>
+	<RadzenDropDownDataGrid TValue="Guid" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+						Data=@(MyDropDownDataGrid) ValueProperty="Id" TextProperty="LastName"
+						Style="width: 100%" AllowColumnResize="true" PageNumbersCount="5" ShowPagingSummary="true" PageSize="10"
+						AllowFilteringByAllStringColumns="true" AllowSorting="false"
+						EmptyText="No items have been selected"
+						Change=@(args => OnChange(args, "DropDownDataGrid"))>
+		<Columns>
+			<RadzenDropDownDataGridColumn Property="FirstName" Title="First Name" Width="200px" />
+			<RadzenDropDownDataGridColumn Property="LastName" Title="Last Name" Width="200px" />
+		</Columns>
+	</RadzenDropDownDataGrid>
+
+	<hr />
+	<h4 class="mb-4">DropDown Virtualization using IQueryable</h4>
+	<RadzenDropDownDataGrid TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowVirtualization="true"
+						Data=@(MyDropDownDataGrid) ValueProperty="Id" TextProperty="LastName"
+						AllowFiltering="true" AllowClear="true"
+						Change=@(args => OnChange(args, "DropDownDataGrid with virtualization using IQueryable")) Class="w-100">
+		<Columns>
+			<RadzenDropDownDataGridColumn Property="FirstName" Title="First Name" />
+			<RadzenDropDownDataGridColumn Property="LastName" Title="Last Name" />
+		</Columns>
+	</RadzenDropDownDataGrid>
+}
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		var varGrid = await PersonnelsService.GetQueryAsync();
+
+		//var varDropDownDataGrid = await PersonnelsService.GetAsync();
+		var varDropDownDataGrid = varGrid;
+
+		if (varGrid != null)
+		{
+			strMessage = varGrid.ToString();
+			if (varGrid.IsSuccess)
+				lstMain = varGrid.Value;
+			if (varDropDownDataGrid.IsSuccess)
+				MyDropDownDataGrid = varDropDownDataGrid.Value;
+		}
+		else
+		{
+			strMessage = "Nothing.........";
+		}
+	}
+
+	public System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel> lstMain { get; set; }
+
+	public System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel> MyDropDownDataGrid { get; set; }
+
+	public string strMessage = "Nothing";
+
+
+	//------------------------------------------------------------------
+	public string strDropDownDataGrid = "";
+
+	void OnChange(object value, string name)
+	{
+		var args = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
+
+		strDropDownDataGrid = $"{ name } value changed to { args }";
+	}
+}

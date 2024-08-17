@@ -1,0 +1,1628 @@
+﻿@page "/RoleManages/RoleManagesList/{refMenuId:int?}"
+
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager;
+@inject Infrastructure.Utility utilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.RoleManagesService RoleManagesService;
+@inject Services.UserRolesService UserRolesService;
+@inject Services.UserManagesService UserManagesService;
+@inject Services.RoleMenusService RoleMenusService;
+@inject Services.MenusService MenusService;
+
+@if (IsFormLoading)
+{
+    <NazmLoading IsShow="true" />
+}
+else
+{
+
+    @if (IsFormProgressing)
+    {
+        <NazmLoadingProgress IsShow="true" />
+    }
+
+    <div class="row pb-3">
+        <div class="col-md-5 mt-5 mb-4">
+            @if (refMenuId != null)
+            {
+                <div id="dgv-main-div" class="row">
+                    <div class="col">
+                        <RadzenDataGrid TItem="ViewModels.RoleManages.RoleManageViewModel" @ref="refToDataGridRoleManage" Data="@((dgvMainRoleManage != null) ? dgvMainRoleManage.Items: null)"
+                                        AllowColumnResize="true" AllowPaging="false" ShowPagingSummary="false" PagerPosition="PagerPosition.Bottom"
+                                        AllowSorting="true" Sort="OnRoleManageSortGrid"
+                                        AllowFiltering="true" Filter="OnRoleManageFilterAddGrid" FilterCleared="OnRoleManageFilterClearedGrid" FilterDelay="@(Infrastructure.Utility.DataGridFilterDelay)"
+                                        FilterMode="FilterMode.Simple" LogicalFilterOperator="LogicalFilterOperator.And" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                        ApplyFilterText="@(Resources.Buttons.Apply)" ClearFilterText="@(Resources.Buttons.Clear)">
+
+                            <EmptyTemplate>
+                                <NazmDataGridEmptyTemplate />
+                            </EmptyTemplate>
+
+                            <HeaderTemplate>
+                                <NazmDataGridHeaderTemplate IsGridExportExcelButton="true" GridExportExcelEventHandler="RoleManageGridExportExcelAsync" IsCreateModalButton="true" CreateModalIdButton="RoleManageCreategeneralModal_1"/>
+                            </HeaderTemplate>
+
+                            <Columns>
+                                <RadzenDataGridColumn TItem="ViewModels.RoleManages.RoleManageViewModel" Property="RoleName" Title="@(Resources.DataDictionary.RoleName)" />
+                                <RadzenDataGridColumn TItem="ViewModels.RoleManages.RoleManageViewModel" Title="@(Resources.DataDictionary.Action)" Width="135px" Sortable="false">
+                                    <Template Context="itemData">
+                                        <button type="button" class="btn btn-warning btn-sm" title="@(Resources.Buttons.Edit)" @onclick="() => passingRoleManageModel(itemData)" data-bs-toggle="modal" data-bs-target="#RoleManageEditgeneralModal_1">
+                                            <i class="@(Resources.ButtonsIcon.Edit) @(Resources.DefaultValues.IconSize18)"></i>
+                                        </button>
+
+                                        <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Delete)" @onclick="() => passingRoleManageModel(itemData)" data-bs-toggle="modal" data-bs-target="#RoleManageDeletegeneralModal_1">
+                                            <i class="@(Resources.ButtonsIcon.Delete) @(Resources.DefaultValues.IconSize18)"></i>
+                                        </button>
+
+                                        <button type="button" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Select)" @onclick="() => passingRoleManageModelToBindGrid(itemData)">
+                                            <i class="@(Resources.ButtonsIcon.Select) @(Resources.DefaultValues.IconSize18)"></i>
+                                        </button>
+
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </div>
+                </div>
+
+                                            @*				@if (dgvMainRoleManage != null && IsFormProgressing == false)
+                                    {
+                                    <NazmPagination TotalCount="@(dgvMainRoleManage.TotalCount)" TotalPages="@(dgvMainRoleManage.TotalPages)" PageNumber="@(dgvMainRoleManage.PageNumber)" PageSize="@(dgvMainRoleManage.PageSize)" EventPageNumberChanged="RoleManageOnPageNumberChangedGrid" EventPageSizeChanged="RoleManageOnPageSizeChangedGrid"  />
+                                    }*@
+            }
+            else
+            {
+                <NazmEmptyRecord />
+            }
+        </div>
+        @if (PassedRoleManageModel.Id != null)
+        {
+            <div class="col-md-7">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item active" role="presentation">
+                        <button class="nav-link active" id="UserRole-tab" data-bs-toggle="tab" data-bs-target="#UserRole" type="button" role="tab" aria-controls="UserRole" aria-selected="false">@(Resources.DataDictionary.UsersRole)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" tabindex="-1" id="RoleMenu-tab" data-bs-toggle="tab" data-bs-target="#RoleMenu" type="button" role="tab" aria-controls="RoleMenu" aria-selected="false">@(Resources.DataDictionary.RoleMenus)</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active " id="UserRole" role="tabpanel" aria-labelledby="UserRole-tab">
+                        @if (refMenuId != null)
+                        {
+                            <div id="dgv-main-div-2" class="row">
+                                <div class="col-md-12">
+                                    <RadzenDataGrid TItem="ViewModels.Users.UserManageSimpleViewModel" @ref="refToDataGridUserRole" Data="@((dgvMainUserRole != null) ? dgvMainUserRole: null)"
+                                                    AllowColumnResize="true" AllowPaging="false" ShowPagingSummary="false" PagerPosition="PagerPosition.Bottom"
+                                                    AllowSorting="true" Sort="OnUserRoleSortGrid"
+                                                    AllowFiltering="true" Filter="OnUserRoleFilterAddGrid" FilterCleared="OnUserRoleFilterClearedGrid" FilterDelay="@(Infrastructure.Utility.DataGridFilterDelay)"
+                                                    FilterMode="FilterMode.Simple" LogicalFilterOperator="LogicalFilterOperator.And" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                                    ApplyFilterText="@(Resources.Buttons.Apply)" ClearFilterText="@(Resources.Buttons.Clear)">
+
+                                        <EmptyTemplate>
+                                            <NazmDataGridEmptyTemplate />
+                                        </EmptyTemplate>
+
+                                        <HeaderTemplate>
+                                            <NazmDataGridHeaderTemplate IsGridExportExcelButton="true" GridExportExcelEventHandler="UserRoleGridExportExcelAsync" IsCreateModalButton="true" CreateModalIdButton="UserRoleCreategeneralModal_1">
+                                                <ExtraHtml>
+                                                    <div class="pt-2 mr-4">
+                                                        <h3>|</h3>
+                                                    </div>
+                                                    <div>
+                                                        <h5 class="pt-3 mr-4">@(PassedRoleManageModel.RoleName)</h5>
+                                                    </div>
+                                                </ExtraHtml>
+                                            </NazmDataGridHeaderTemplate>
+                                        </HeaderTemplate>
+
+                                        <Columns>
+                                            <RadzenDataGridColumn TItem="ViewModels.Users.UserManageSimpleViewModel" Property="UserName" Title="@(Resources.DataDictionary.UserName)" Width="100px" />
+                                            <RadzenDataGridColumn TItem="ViewModels.Users.UserManageSimpleViewModel" Property="FirstName" Title="@(Resources.DataDictionary.FirstName)" Width="80px" />
+                                            <RadzenDataGridColumn TItem="ViewModels.Users.UserManageSimpleViewModel" Property="LastName" Title="@(Resources.DataDictionary.LastName)" Width="80px" />
+                                            <RadzenDataGridColumn TItem="ViewModels.Users.UserManageSimpleViewModel" Property="OrganizationalUnit" Title="@(Resources.DataDictionary.OrganizationalUnit)" />
+                                            <RadzenDataGridColumn TItem="ViewModels.Users.UserManageSimpleViewModel" Title="@(Resources.DataDictionary.Action)" Width="60px" Sortable="false">
+                                                <Template Context="itemData">
+                                                    <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Delete)" @onclick="() => passingUserRoleModel(itemData)" data-bs-toggle="modal" data-bs-target="#UserRoleDeletegeneralModal_1">
+                                                        <i class="@(Resources.ButtonsIcon.Delete) @(Resources.DefaultValues.IconSize18)"></i>
+                                                    </button>
+                                                </Template>
+                                            </RadzenDataGridColumn>
+                                        </Columns>
+                                    </RadzenDataGrid>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <NazmEmptyRecord />
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="RoleMenu" role="tabpanel" aria-labelledby="RoleMenu-tab">
+
+                        @if (lstMenu != null)
+                        {
+                            <div id="dgv-main-div-3" class="row">
+                                <div class="col-md-12">
+
+                                    <div class="card text-dark bg-light mb-3">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-start">
+                                                <div class="pt-2">
+                                                    <button type="button" class="text-primary mb-2" title="@(Resources.Buttons.CheckAll)" @onclick="() => CheckAllUnCheckAllHandler(true)">
+                                                        <i class="@(Resources.ButtonsIcon.CheckAll) @(Resources.DefaultValues.IconSize24)"></i>
+                                                    </button>
+                                                    <button type="button" class="text-danger mb-2" title="@(Resources.Buttons.UnCheckAll)" @onclick="() => CheckAllUnCheckAllHandler(false)">
+                                                        <i class="@(Resources.ButtonsIcon.UnCheckAll) @(Resources.DefaultValues.IconSize24)"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="pt-2 mr-4">
+                                                    <h3>|</h3>
+                                                </div>
+                                                <div>
+                                                    <h5 class="pt-3 mr-4">@(PassedRoleManageModel.RoleName)</h5>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <EditForm Model="lstMenu" OnValidSubmit="OnRoleMenuSubmitAsync">
+                                                <FluentValidationValidator />
+                                                <DataAnnotationsValidator />
+                                                    <div class="bg-light d-inline-block overflow-auto" style="width: 100%; height: 400px;">
+                                                        <ul class="pr-3 mt-3">
+                                                            @foreach (var parentMenu in lstMenu)
+                                                            {
+                                                                if (parentMenu.ParentLevel == 0)
+                                                                {
+                                                                    if (parentMenu.Url.StartsWith('/'))
+                                                                    {
+                                                                        <li class="mb-2">
+                                                                            <div class="menu-title font-bold-style form-check my-1">
+                                                                                <InputCheckbox class="form-check-input" id="@(parentMenu.MenuId)" @bind-Value="@(parentMenu.IsSelected)" />
+                                                                                <label class="form-check-label ms-0 d-inline align-top" for="@(parentMenu.MenuId)">
+                                                                                    @(parentMenu.MenuTitle)
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <li class="mb-3">
+                                                                            <ul>
+                                                                                <li>
+                                                                                    <div class="menu-title font-bold-style form-check my-1">
+                                                                                        <InputCheckbox class="form-check-input" id="@(parentMenu.MenuId)" @bind-Value="@(parentMenu.IsSelected)" @onclick="() => HeaderSelectedHandler(parentMenu.MenuId, parentMenu.IsSelected)" />
+                                                                                        <label class="form-check-label ms-0 d-inline align-top" for="@(parentMenu.MenuId)">
+                                                                                            @(parentMenu.MenuTitle)
+                                                                                        </label>
+                                                                                        <button type="button" class="align-top" title="@(Resources.Buttons.OpenClose)" data-bs-toggle="collapse" href="#@((parentMenu.MenuTitle).Replace(" ", ""))" aria-expanded="true" aria-controls="@((parentMenu.MenuTitle).Replace(" ", ""))">
+                                                                                            <i class="@(Resources.ButtonsIcon.MenuOpen)"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <ul class="pr-4 collapse show" id="@((parentMenu.MenuTitle).Replace(" ", ""))">
+                                                                                        @foreach (var menu in lstMenu)
+                                                                                        {
+                                                                                            if (menu.ParentLevel > 0 && menu.ParentIdString == $"/{parentMenu.MenuId}/")
+                                                                                            {
+                                                                                                <li>
+                                                                                                    <div class="form-check  my-0">
+                                                                                                        <InputCheckbox class="form-check-input" id="@(menu.MenuId)" @bind-Value="@(menu.IsSelected)" @onclick="() => SubsSelectedHandler(parentMenu, menu)" />
+                                                                                                        <label class="form-check-label ms-0" for="@(menu.MenuId)">
+                                                                                                            @(menu.MenuTitle)
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </li>
+                                                                                            }
+                                                                                        }
+                                                                                    </ul>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </li>
+                                                                    }
+                                                                }
+                                                            }
+                                                        </ul>
+                                                    </div>
+
+                                            </EditForm>
+                                        </div>
+
+                                        <div class="card-footer">
+                                            <div class="mr-3 float-start">
+                                                <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)" @onclick="() => OnRoleMenuSubmitAsync()">
+                                                    <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+@*                                     <div class="d-flex justify-content-start">
+                                        <div class="pt-2">
+                                            <button type="button" class="text-primary mb-2" title="@(Resources.Buttons.CheckAll)" @onclick="() => CheckAllUnCheckAllHandler(true)">
+                                                <i class="@(Resources.ButtonsIcon.CheckAll) @(Resources.DefaultValues.IconSize24)"></i>
+                                            </button>
+                                            <button type="button" class="text-danger mb-2" title="@(Resources.Buttons.UnCheckAll)" @onclick="() => CheckAllUnCheckAllHandler(false)">
+                                                <i class="@(Resources.ButtonsIcon.UnCheckAll) @(Resources.DefaultValues.IconSize24)"></i>
+                                            </button>
+                                        </div>
+                                        <div class="pt-2 mr-4">
+                                            <h3>|</h3>
+                                        </div>
+                                        <div>
+                                            <h5 class="pt-3 mr-4">@(PassedRoleManageModel.RoleName)</h5>
+
+                                        </div>
+                                    </div>
+
+                                    <EditForm Model="lstMenu" OnValidSubmit="OnRoleMenuSubmitAsync">
+                                        <FluentValidationValidator />
+                                        <DataAnnotationsValidator />
+                                        <div class="d-flex align-items-end">
+                                            <div class="bg-light d-inline-block overflow-auto" style="width: 93%; height: 400px;">
+                                                <ul class="pr-3 mt-3">
+                                                    @foreach (var parentMenu in lstMenu)
+                                                    {
+                                                        if (parentMenu.ParentLevel == 0)
+                                                        {
+                                                            if (parentMenu.Url.StartsWith('/'))
+                                                            {
+                                                                <li class="mb-2">
+                                                                <div class="menu-title font-bold-style form-check my-1">
+                                                                        <InputCheckbox class="form-check-input" id="@(parentMenu.MenuId)" @bind-Value="@(parentMenu.IsSelected)" />
+                                                                        <label class="form-check-label ms-0 d-inline align-top" for="@(parentMenu.MenuId)">
+                                                                            @(parentMenu.MenuTitle)
+                                                                        </label>
+                                                                    </div>
+                                                                </li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li class="mb-3">
+                                                                    <ul>
+                                                                        <li>
+                                                                            <div class="menu-title font-weight-bold form-check my-1">
+                                                                                <InputCheckbox class="form-check-input" id="@(parentMenu.MenuId)" @bind-Value="@(parentMenu.IsSelected)" @onclick="() => HeaderSelectedHandler(parentMenu.MenuId, parentMenu.IsSelected)" />
+                                                                                <label class="form-check-label ms-0 d-inline align-top" for="@(parentMenu.MenuId)">
+                                                                                    @(parentMenu.MenuTitle)
+                                                                                </label>
+                                                                                <button type="button" class="align-top" title="@(Resources.Buttons.OpenClose)" data-bs-toggle="collapse" href="#@((parentMenu.MenuTitle).Replace(" ", ""))" aria-expanded="true" aria-controls="@((parentMenu.MenuTitle).Replace(" ", ""))">
+                                                                                    <i class="@(Resources.ButtonsIcon.MenuOpen)"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <ul class="pr-4 collapse show" id="@((parentMenu.MenuTitle).Replace(" ", ""))">
+                                                                                @foreach (var menu in lstMenu)
+                                                                                {
+                                                                                    if (menu.ParentLevel > 0 && menu.ParentIdString == $"/{parentMenu.MenuId}/")
+                                                                                    {
+                                                                                        <li>
+                                                                                            <div class="form-check  my-0">
+                                                                                                <InputCheckbox class="form-check-input" id="@(menu.MenuId)" @bind-Value="@(menu.IsSelected)" @onclick="() => SubsSelectedHandler(parentMenu, menu)" />
+                                                                                                <label class="form-check-label ms-0" for="@(menu.MenuId)">
+                                                                                                    @(menu.MenuTitle)
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    }
+                                                                                }
+                                                                            </ul>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            }
+                                                        }
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <div class="mr-3 text-left d-inline-block">
+                                                <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)">
+                                                    <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </EditForm> *@
+
+
+
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+
+    /* RoleManage Modals */
+
+    //// RoleManage Create Modal
+    <div class="modal fade" id="RoleManageCreategeneralModal_1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RoleModalCreateLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="RoleModalCreateLabel">@(Resources.Buttons.Create)</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <EditForm Model="RoleManageModel" OnValidSubmit="OnRoleManageCreateSubmitAsync">
+                        <FluentValidationValidator />
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">@(Resources.DataDictionary.RoleTitle) :</label>
+                            <NazmInputText UniqueId="title"
+                                         CSS="form-control"
+                                         ValueProperty="@(RoleManageModel.RoleName)"
+                                         ValueChangedEventHandler="OnRoleManageTextBoxValueChanged" />
+                            <div class="form-control-validation">
+                                <ValidationMessage For="() => RoleManageModel.RoleName" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 float-start">
+                            <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Return)" data-bs-dismiss="modal">
+                                <i class="@(Resources.ButtonsIcon.Return) @(Resources.DefaultValues.IconSize24)"></i>
+                            </button>
+
+                            <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)" data-bs-dismiss="modal">
+                                <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                            </button>
+                        </div>
+
+                    </EditForm>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    //// RoleManage Edit Modal
+    <div class="modal fade" id="RoleManageEditgeneralModal_1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RoleModalEditLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="RoleModalEditLabel">@(Resources.Buttons.Edit)</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <EditForm Model="RoleManageModel" OnValidSubmit="OnRoleManageEditSubmitAsync">
+                        <FluentValidationValidator />
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">@(Resources.DataDictionary.RoleTitle) :</label>
+                            <NazmInputText UniqueId="title"
+                                         CSS="form-control"
+                                         ValueProperty="@(RoleManageModel.RoleName)"
+                                         ValueChangedEventHandler="OnRoleManageTextBoxValueChanged"/>
+                            <div class="form-control-validation">
+                                <ValidationMessage For="() => RoleManageModel.RoleName" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 float-start">
+                            <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Return)" data-bs-dismiss="modal">
+                                <i class="@(Resources.ButtonsIcon.Return) @(Resources.DefaultValues.IconSize24)"></i>
+                            </button>
+
+                            <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)" data-bs-dismiss="modal">
+                                <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                            </button>
+                        </div>
+
+                    </EditForm>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    //// Role Manage Delete Modal
+
+    <NazmModal UniqueId="RoleManageDeletegeneralModal_1"
+               RequiredClose="true"
+               IconType="Infrastructure.Enums.ModalClass.ModalIconType.Warning"
+               StateType="Infrastructure.Enums.ModalClass.ModalStateType.Confirm"
+               Title="@(Resources.DataDictionary.Warning)"
+               EventCallbackHandler="RoleManageModelmodalConfirmHandlerAsync">
+        <Body>
+            @(string.Format(Resources.Messages.Validations.MessageDelete, Resources.DataDictionary.RoleManage))
+        </Body>
+    </NazmModal>
+
+    /* End RoleManage Modals */
+
+    /* UserRole Modals */
+
+    //// UserRole Create Modal
+    <div class="modal fade" id="UserRoleCreategeneralModal_1" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-focus="false" tabindex="-1" aria-labelledby="RoleModalCreateLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="RoleModalCreateLabel">@(Resources.Buttons.Create)</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <EditForm Model="UserRoleModel" OnValidSubmit="OnUserRoleAddSubmitAsync">
+                        <FluentValidationValidator />
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label for="UserId" class="form-label">@(Resources.DataDictionary.User) :</label>
+                            <NazmDropDown UniqueId="UserId" CSS="form-control"
+                                          IsAllowClear="true" IsAllowFiltering="true" Placeholder="@(Resources.Messages.Validations.PleaseSelectOne)"
+                                          ValueProperty="Id" TextProperty="FullName"
+                                          DataItems="@(cmbUser)" BindValue="UserRoleModel.UserId"
+                                          TItem="ViewModels.Users.UserManageViewModel" TResult="string"
+                                          ValueChangedEventHandler="OnUserChanged" />
+                            <div class="form-control-validation">
+                                <ValidationMessage For="() => UserRoleModel.UserId" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 float-start">
+                            <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Return)" data-bs-dismiss="modal">
+                                <i class="@(Resources.ButtonsIcon.Return) @(Resources.DefaultValues.IconSize24)"></i>
+                            </button>
+
+                            <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)" data-bs-dismiss="modal">
+                                <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                            </button>
+                        </div>
+
+                    </EditForm>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    //// UserRole Delete Modal
+
+    <NazmModal UniqueId="UserRoleDeletegeneralModal_1"
+               RequiredClose="true"
+               IconType="Infrastructure.Enums.ModalClass.ModalIconType.Warning"
+               StateType="Infrastructure.Enums.ModalClass.ModalStateType.Confirm"
+               Title="@(Resources.DataDictionary.Warning)"
+               EventCallbackHandler="UserRoleModalConfirmHandlerAsync">
+        <Body>
+            @(string.Format(Resources.Messages.Validations.MessageDelete, Resources.DataDictionary.UserRole))
+        </Body>
+    </NazmModal>
+
+    /* End UserRole Modals */
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+
+
+@code {
+
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    private string passingIdToNazmLoading { get; set; }
+
+    public bool IsFormLoading { get; set; }
+    public bool IsFormProgressing { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    #region RoleManage Properties
+
+    private ViewModels.RoleManages.RoleManageViewModel RoleManageModel { get; set; }
+    private ViewModels.RoleManages.RoleManageViewModel PassedRoleManageModel { get; set; }
+    private ViewModels.RoleManages.RoleManageUpdateViewModel RoleManageEditNewModel { get; set; }
+    private ViewModels.RoleManages.RoleManageCreateViewModel RoleManageCreateNewModel { get; set; }
+
+    private List<ViewModels.SortItem> lstSortItemsRoleManage { get; set; }
+    private List<ViewModels.FilterItem> lstFilterItemsRoleManage { get; set; }
+    RadzenDataGrid<ViewModels.RoleManages.RoleManageViewModel> refToDataGridRoleManage;
+    public ViewModels.PagingViewModel<ViewModels.RoleManages.RoleManageViewModel> dgvMainRoleManage { get; set; }
+
+    #endregion
+
+    #region UserRole Properties
+
+
+    private ViewModels.UserRoles.UserRoleViewModel UserRoleModel { get; set; }
+    private ViewModels.UserRoles.UserRoleCreateViewModel UserRoleNewModel { get; set; }
+
+    private ViewModels.Users.UserManageSimpleViewModel UserManageSimpleModel { get; set; }
+
+
+    private List<ViewModels.SortItem> lstSortItemsUserRole { get; set; }
+    private List<ViewModels.FilterItem> lstFilterItemsUserRole { get; set; }
+    RadzenDataGrid<ViewModels.Users.UserManageSimpleViewModel> refToDataGridUserRole;
+    public System.Collections.Generic.IList<ViewModels.Users.UserManageSimpleViewModel> dgvMainUserRole { get; set; }
+
+    public IEnumerable<ViewModels.Users.UserManageViewModel> cmbUser { get; set; }
+
+    #endregion
+
+    #region RoleMenu Properties
+
+    private IEnumerable<ViewModels.RoleMenus.RoleMenuManageSelectedViewModel> lstMenu { get; set; }
+    private ViewModels.RoleMenus.RoleMenuCreateViewModel RoleMenuNewModel { get; set; }
+
+    private List<ViewModels.SortItem> lstSortItemsRoleMenu { get; set; }
+    private List<ViewModels.FilterItem> lstFilterItemsRoleMenu { get; set; }
+
+    private List<string> lstAdd { get; set; }
+    private List<string> lstDelete { get; set; }
+
+    private bool IsSelectionRemained { get; set; }
+
+    #endregion
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        IsFormLoading = true;
+        // ********************
+
+        passingIdToNazmLoading = "dgv-main-div";
+
+        RoleManageModel = new ViewModels.RoleManages.RoleManageViewModel();
+        PassedRoleManageModel = new ViewModels.RoleManages.RoleManageViewModel();
+        UserRoleModel = new ViewModels.UserRoles.UserRoleViewModel();
+        lstMenu = new List<ViewModels.RoleMenus.RoleMenuManageSelectedViewModel>();
+        lstAdd = new List<string>();
+        lstDelete = new List<string>();
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+        dgvMainRoleManage = null;
+
+        lstFilterItemsRoleManage = new List<ViewModels.FilterItem>();
+        lstSortItemsRoleManage = new List<ViewModels.SortItem>();
+
+        lstFilterItemsUserRole = new List<ViewModels.FilterItem>();
+        lstSortItemsUserRole = new List<ViewModels.SortItem>();
+
+        await RoleManageBindGrid();
+
+        // ********************
+        IsFormLoading = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        IsFormLoading = true;
+        // ********************
+
+        await bindUsers();
+
+        // ********************
+        IsFormLoading = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (lstFilterItemsRoleManage.Count > 0)
+        {
+            foreach (var filterItem in lstFilterItemsRoleManage)
+            {
+                var column = refToDataGridRoleManage.ColumnsCollection.Where(c => c.Property == filterItem.Field).FirstOrDefault();
+
+                if (column != null)
+                {
+                    column.FilterValue = filterItem.Value;
+                    //column.FilterOperator = filterItem.Operator as Radzen.FilterOperator;
+                }
+            }
+            await refToDataGridRoleManage.Reload();
+        }
+        if (lstSortItemsRoleManage.Count > 0)
+        {
+            foreach (var sortItem in lstSortItemsRoleManage)
+            {
+                var column = refToDataGridRoleManage.ColumnsCollection.Where(c => c.Property == sortItem.Field).FirstOrDefault();
+
+                if (column != null)
+                {
+                    column.SortOrder = (sortItem.SortOrder == Infrastructure.Utility.SortAscending) ? SortOrder.Ascending : SortOrder.Descending;
+                }
+            }
+            await refToDataGridRoleManage.Reload();
+        }
+
+        if (lstFilterItemsUserRole.Count > 0)
+        {
+            foreach (var filterItem in lstFilterItemsUserRole)
+            {
+                var column = refToDataGridUserRole.ColumnsCollection.Where(c => c.Property == filterItem.Field).FirstOrDefault();
+
+                if (column != null)
+                {
+                    column.FilterValue = filterItem.Value;
+                    //column.FilterOperator = filterItem.Operator as Radzen.FilterOperator;
+                }
+            }
+            await refToDataGridUserRole.Reload();
+        }
+        if (lstSortItemsUserRole.Count > 0)
+        {
+            foreach (var sortItem in lstSortItemsUserRole)
+            {
+                var column = refToDataGridUserRole.ColumnsCollection.Where(c => c.Property == sortItem.Field).FirstOrDefault();
+
+                if (column != null)
+                {
+                    column.SortOrder = (sortItem.SortOrder == Infrastructure.Utility.SortAscending) ? SortOrder.Ascending : SortOrder.Descending;
+                }
+            }
+            await refToDataGridUserRole.Reload();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    #region RoleManage Events
+
+    private async Task OnRoleManageTextBoxValueChanged(string value)
+    {
+        RoleManageModel.RoleName = value;
+    }
+
+    private async Task OnRoleManageCreateSubmitAsync()
+    {
+        passingIdToNazmLoading = "dgv-main-div";
+        IsFormProgressing = true;
+        // ********************
+
+
+        bool flagResult = await SaveRoleManageCreateAsync();
+
+        if (flagResult)
+        {
+            RoleManageModel = new ViewModels.RoleManages.RoleManageViewModel();
+            await RoleManageBindGrid();
+            //string uri = $"{Infrastructure.Utility.setUri<Client.Pages.RegulationKinds.List>()}/{refMenuId.Value}";
+            //NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        }
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task<bool> SaveRoleManageCreateAsync()
+    {
+        RoleManageCreateNewModel = new ViewModels.RoleManages.RoleManageCreateViewModel()
+            {
+                Name = RoleManageModel.RoleName,
+
+            };
+
+        var varResult = await RoleManagesService.PostAsync(RoleManageCreateNewModel);
+        bool flagReturn = false;
+        if (varResult != null)
+        {
+            lstNotifications.Clear();
+            flagReturn = varResult.IsSuccess;
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        return flagReturn;
+    }
+
+    private async Task OnRoleManageEditSubmitAsync()
+    {
+        passingIdToNazmLoading = "dgv-main-div";
+        IsFormProgressing = true;
+        // ********************
+
+
+        bool flagResult = await SaveRoleManageEditAsync();
+
+        if (flagResult)
+        {
+            RoleManageModel = new ViewModels.RoleManages.RoleManageViewModel();
+            await RoleManageBindGrid();
+            //string uri = $"{Infrastructure.Utility.setUri<Client.Pages.RegulationKinds.List>()}/{refMenuId.Value}";
+            //NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        }
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task<bool> SaveRoleManageEditAsync()
+    {
+        RoleManageEditNewModel = new ViewModels.RoleManages.RoleManageUpdateViewModel()
+            {
+                Id = RoleManageModel.Id,
+                Name = RoleManageModel.RoleName,
+
+            };
+
+        var varResult = await RoleManagesService.PutAsync(RoleManageEditNewModel);
+        bool flagReturn = false;
+        if (varResult != null)
+        {
+            lstNotifications.Clear();
+            flagReturn = varResult.IsSuccess;
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        return flagReturn;
+    }
+
+    private async Task RoleManageModelmodalConfirmHandlerAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        await RoleManageDeleteAsync(RoleManageModel);
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task RoleManageDeleteAsync(ViewModels.RoleManages.RoleManageViewModel viewModel)
+    {
+        passingIdToNazmLoading = "dgv-main-div";
+        IsFormProgressing = true;
+        // ********************
+        var varResult = await RoleManagesService.DeleteAsync(new Guid(viewModel.Id));
+        if (varResult != null)
+        {
+            if (varResult.IsSuccess)
+                RoleManageModel = new ViewModels.RoleManages.RoleManageViewModel();
+
+            lstNotifications.Clear();
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        await RoleManageBindGrid();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private void passingRoleManageModel(ViewModels.RoleManages.RoleManageViewModel viewModel)
+    {
+        RoleManageModel = viewModel;
+    }
+
+    private async Task passingRoleManageModelToBindGrid(ViewModels.RoleManages.RoleManageViewModel viewModel)
+    {
+        IsFormProgressing = true;
+        // ********************
+        PassedRoleManageModel = viewModel;
+
+        await UserRoleBindGrid();
+        await RoleMenuBindGrid();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task RoleManageGridExportExcelAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        await RoleManageBindGrid(pageSize: Infrastructure.Utility.PageSizeMax, fileExportType: Domain.Enums.FileExportTypeEnum.Office_Excel);
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task RoleManageBindGrid(int? pageNumber = Infrastructure.Utility.PageNumber, int? pageSize = Infrastructure.Utility.PageSize, Domain.Enums.FileExportTypeEnum? fileExportType = null)
+    {
+        if (refMenuId != null)
+        {
+            ViewModels.FilterParams filterParams = new ViewModels.FilterParams();
+            if (lstFilterItemsRoleManage.Count > 0)
+            {
+
+                string strFilterJson = Newtonsoft.Json.JsonConvert.SerializeObject(lstFilterItemsRoleManage);
+
+                filterParams.FilterJson = strFilterJson;
+            }
+            if (lstSortItemsRoleManage.Count > 0)
+            {
+                string strSort = null;
+                foreach (var sortItem in lstSortItemsRoleManage)
+                {
+                    strSort += $"{sortItem.Field} {sortItem.SortOrder}, ";
+                }
+
+                filterParams.SortBy = strSort.Trim().TrimEnd(',');
+            }
+
+            if (fileExportType == null)
+            {
+                ViewModels.Shared.PublicViewModel inputParamsViewModel = new ViewModels.Shared.PublicViewModel()
+                    {
+                        PageNumber = pageNumber.Value,
+                        PageSize = pageSize.Value,
+                        FilterParams = filterParams,
+                        MenuId = refMenuId.Value,
+                    };
+
+                var varGrid = await RoleManagesService.FetchAsync(inputParamsViewModel);
+                if (varGrid != null)
+                {
+                    if (varGrid.IsSuccess)
+                        dgvMainRoleManage = varGrid.Value;
+                }
+            }
+            else if (fileExportType == Domain.Enums.FileExportTypeEnum.Office_Excel)
+            {
+                var varGridColumns = await utilityClass.getGridColumnListAsync(refToDataGridRoleManage.ColumnsCollection);
+
+                ViewModels.Shared.PublicViewModel inputParamsViewModel = new()
+                    {
+                        PageSize = pageSize.Value,
+                        FilterParams = filterParams,
+                        MenuId = refMenuId.Value,
+                        FileExportType = Domain.Enums.FileExportTypeEnum.Office_Excel,
+                        FileExportColumns = varGridColumns,
+                    };
+
+                string fileExportName = $"{Resources.DataDictionary.RoleManageList} - {Resources.DataDictionary.WorkGroup}.xlsx";
+                var varExportExcelData = await RoleManagesService.FetchAllAndFileDownloadAsync(inputParamsViewModel);
+                if (varExportExcelData != null)
+                {
+                    if (varExportExcelData.IsSuccess)
+                    {
+                        await utilityClass.FileDownloadAsDataStreamFromAPIAsync(JsRuntime, fileExportName, varExportExcelData.Value);
+
+                        if (varExportExcelData.Successes.Count() > 0)
+                            lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                                (varExportExcelData.Successes, Infrastructure.Enums.MessageType.Success));
+                    }
+                    if (varExportExcelData.IsFailed)
+                    {
+                        if (varExportExcelData.Errors.Count() > 0)
+                            lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                                (varExportExcelData.Errors, Infrastructure.Enums.MessageType.Error));
+                    }
+                }
+            }
+        }
+
+    }
+
+    private async Task OnRoleManageSortGrid(DataGridColumnSortEventArgs<ViewModels.RoleManages.RoleManageViewModel> args)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        ViewModels.SortItem sortColumn = new ViewModels.SortItem()
+            {
+                Field = args.Column.Property,
+                SortOrder = (args.SortOrder == SortOrder.Ascending) ? Infrastructure.Utility.SortAscending : Infrastructure.Utility.SortDescending,
+            };
+
+        if (lstSortItemsRoleManage.Exists(c => c.Field == args.Column.Property))
+        {
+            await sortItemsRemoveRoleManage(args.Column.Property);
+        }
+        if ((args.SortOrder == SortOrder.Ascending) || (args.SortOrder == SortOrder.Descending))
+        {
+            if (lstSortItemsRoleManage.Count > 0)
+                lstSortItemsRoleManage.Clear();
+
+            lstSortItemsRoleManage.Add(sortColumn);
+        }
+
+        await RoleManageBindGrid();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task OnRoleManageFilterAddGrid(DataGridColumnFilterEventArgs<ViewModels.RoleManages.RoleManageViewModel> args)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        ViewModels.FilterItem filterColumn = new ViewModels.FilterItem()
+            {
+                Field = args.Column.Property,
+                Operator = args.Column.FilterOperator.ToString(),//.Replace("Equals", "eq"),
+                Value = args.Column.GetFilterValue(),
+            };
+
+        if (lstFilterItemsRoleManage.Exists(c => c.Field == args.Column.Property))
+        {
+            await filterItemsRemoveRoleManage(args.Column.Property);
+        }
+        lstFilterItemsRoleManage.Add(filterColumn);
+
+        await RoleManageBindGrid();
+
+        StateHasChanged();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task OnRoleManageFilterClearedGrid(DataGridColumnFilterEventArgs<ViewModels.RoleManages.RoleManageViewModel> args)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        if (lstFilterItemsRoleManage.Exists(c => c.Field == args.Column.Property))
+        {
+            await filterItemsRemoveRoleManage(args.Column.Property);
+        }
+
+        await RoleManageBindGrid();
+
+        StateHasChanged();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task sortItemsRemoveRoleManage(string strField)
+    {
+        await Task.Run(() =>
+            {
+                int index = 0;
+                if (lstSortItemsRoleManage.Count > 0)
+                {
+                    foreach (var sortItem in lstSortItemsRoleManage)
+                    {
+                        if (sortItem.Field == strField)
+                            break;
+                        index++;
+                    }
+
+                    lstSortItemsRoleManage.RemoveAt(index);
+                }
+            });
+    }
+
+    private async Task filterItemsRemoveRoleManage(string strField)
+    {
+        await Task.Run(() =>
+            {
+                int index = 0;
+                if (lstFilterItemsRoleManage.Count > 0)
+                {
+                    foreach (var filterItem in lstFilterItemsRoleManage)
+                    {
+                        if (filterItem.Field == strField)
+                            break;
+                        index++;
+                    }
+
+                    lstFilterItemsRoleManage.RemoveAt(index);
+                }
+            });
+    }
+
+    private async Task RoleManageOnPageNumberChangedGrid(int pageNum)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        await RoleManageBindGrid(pageNumber: pageNum, pageSize: dgvMainRoleManage?.PageSize);
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task RoleManageOnPageSizeChangedGrid(int pageSize)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        await RoleManageBindGrid(pageSize: pageSize);
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    #endregion
+
+    #region UserRole Events
+
+
+    private async Task bindUsers()
+    {
+        ViewModels.Shared.PublicViewModel inputParamsViewModel = new ViewModels.Shared.PublicViewModel()
+            {
+                PageSize = Infrastructure.Utility.PageSizeCombo,
+                MenuId = refMenuId.Value,
+            };
+
+        var varUserManagesResult = await UserManagesService.FetchAsync(inputParamsViewModel);
+        if (varUserManagesResult != null)
+        {
+            cmbUser = varUserManagesResult.Value.Items;
+        }
+    }
+
+    private void OnUserChanged(dynamic value)
+    {
+        UserRoleModel.UserId = value;
+    }
+
+    private async Task OnUserRoleAddSubmitAsync()
+    {
+        passingIdToNazmLoading = "dgv-main-div-2";
+        IsFormProgressing = true;
+        // ********************
+
+
+        bool flagResult = await SaveUserRoleAddAsync();
+
+        if (flagResult)
+        {
+            UserRoleModel = new ViewModels.UserRoles.UserRoleViewModel();
+            await UserRoleBindGrid();
+            //string uri = $"{Infrastructure.Utility.setUri<Client.Pages.RegulationKinds.List>()}/{refMenuId.Value}";
+            //NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        }
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task<bool> SaveUserRoleAddAsync()
+    {
+        UserRoleNewModel = new ViewModels.UserRoles.UserRoleCreateViewModel()
+            {
+                UserId = UserRoleModel.UserId,
+                RoleId = PassedRoleManageModel.Id,
+            };
+
+        var varResult = await UserRolesService.AddUserToRoleAsync(UserRoleNewModel);
+        bool flagReturn = false;
+        if (varResult != null)
+        {
+            lstNotifications.Clear();
+            flagReturn = varResult.IsSuccess;
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        return flagReturn;
+    }
+
+    private async Task UserRoleModalConfirmHandlerAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        await UserRoleDeleteAsync(UserManageSimpleModel);
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task UserRoleDeleteAsync(ViewModels.Users.UserManageSimpleViewModel viewModel)
+    {
+        passingIdToNazmLoading = "dgv-main-div-2";
+        IsFormProgressing = true;
+        // ********************
+        var varResult = await UserRolesService.DeleteUserFromRoleAsync(new ViewModels.UserRoles.UserRoleDeleteViewModel()
+            {
+                UserId = viewModel.Id,
+                RoleId = PassedRoleManageModel.Id,
+            });
+
+        if (varResult != null)
+        {
+            if (varResult.IsSuccess)
+                UserRoleModel = new ViewModels.UserRoles.UserRoleViewModel();
+
+            lstNotifications.Clear();
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        await UserRoleBindGrid();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private void passingUserRoleModel(ViewModels.Users.UserManageSimpleViewModel viewModel)
+    {
+        UserManageSimpleModel = viewModel;
+    }
+
+    private async Task UserRoleGridExportExcelAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        await UserRoleBindGrid(pageSize: Infrastructure.Utility.PageSizeMax, fileExportType: Domain.Enums.FileExportTypeEnum.Office_Excel);
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task UserRoleBindGrid(int pageNumber = Infrastructure.Utility.PageNumber, int pageSize = Infrastructure.Utility.PageSize, Domain.Enums.FileExportTypeEnum? fileExportType = null)
+    {
+        if (refMenuId != null)
+        {
+            ViewModels.FilterParams filterParams = new ViewModels.FilterParams();
+            if (lstFilterItemsUserRole.Count > 0)
+            {
+
+                string strFilterJson = Newtonsoft.Json.JsonConvert.SerializeObject(lstFilterItemsUserRole);
+
+                filterParams.FilterJson = strFilterJson;
+            }
+            if (lstSortItemsUserRole.Count > 0)
+            {
+                string strSort = null;
+                foreach (var sortItem in lstSortItemsUserRole)
+                {
+                    strSort += $"{sortItem.Field} {sortItem.SortOrder}, ";
+                }
+
+                filterParams.SortBy = strSort.Trim().TrimEnd(',');
+            }
+
+            if (fileExportType == null)
+            {
+                ViewModels.UserRoles.UserRoleInputParamsViewModel inputParamsViewModel = new ViewModels.UserRoles.UserRoleInputParamsViewModel()
+                    {
+                        RoleId = new Guid(PassedRoleManageModel.Id).ToString(),
+                        PageSize = pageSize,
+                        PageNumber = pageNumber,
+                        FilterParams = filterParams,
+                        MenuId = refMenuId.Value,
+                    };
+
+                var varGrid = await UserRolesService.FetchByRoleIdAsync(inputParamsViewModel);
+                if (varGrid != null)
+                {
+                    dgvMainUserRole = varGrid.Value;
+                }
+            }
+            else if (fileExportType == Domain.Enums.FileExportTypeEnum.Office_Excel)
+            {
+                var varGridColumns = await utilityClass.getGridColumnListAsync(refToDataGridUserRole.ColumnsCollection);
+
+                ViewModels.UserRoles.UserRoleInputParamsViewModel inputParamsViewModel = new()
+                    {
+                        RoleId = new Guid(PassedRoleManageModel.Id).ToString(),
+                        PageSize = pageSize,
+                        PageNumber = pageNumber,
+                        FilterParams = filterParams,
+                        MenuId = refMenuId.Value,
+                        FileExportType = Domain.Enums.FileExportTypeEnum.Office_Excel,
+                        FileExportColumns = varGridColumns,
+                    };
+
+                string fileExportName = $"{Resources.DataDictionary.RoleManageList} - {Resources.DataDictionary.UsersRole}.xlsx";
+                var varExportExcelData = await UserRolesService.FetchByRoleIdAndFileDownloadAsync(inputParamsViewModel);
+                if (varExportExcelData != null)
+                {
+                    if (varExportExcelData.IsSuccess)
+                    {
+                        await utilityClass.FileDownloadAsDataStreamFromAPIAsync(JsRuntime, fileExportName, varExportExcelData.Value);
+
+                        if (varExportExcelData.Successes.Count() > 0)
+                            lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                                (varExportExcelData.Successes, Infrastructure.Enums.MessageType.Success));
+                    }
+                    if (varExportExcelData.IsFailed)
+                    {
+                        if (varExportExcelData.Errors.Count() > 0)
+                            lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                                (varExportExcelData.Errors, Infrastructure.Enums.MessageType.Error));
+                    }
+                }
+            }
+        }
+
+    }
+
+    private async Task OnUserRoleSortGrid(DataGridColumnSortEventArgs<ViewModels.Users.UserManageSimpleViewModel> args)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        ViewModels.SortItem sortColumn = new ViewModels.SortItem()
+            {
+                Field = args.Column.Property,
+                SortOrder = (args.SortOrder == SortOrder.Ascending) ? Infrastructure.Utility.SortAscending : Infrastructure.Utility.SortDescending,
+            };
+
+        if (lstSortItemsUserRole.Exists(c => c.Field == args.Column.Property))
+        {
+            await sortItemsRemoveUserRole(args.Column.Property);
+        }
+        if ((args.SortOrder == SortOrder.Ascending) || (args.SortOrder == SortOrder.Descending))
+        {
+            if (lstSortItemsUserRole.Count > 0)
+                lstSortItemsUserRole.Clear();
+
+            lstSortItemsUserRole.Add(sortColumn);
+        }
+
+        await UserRoleBindGrid();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task OnUserRoleFilterAddGrid(DataGridColumnFilterEventArgs<ViewModels.Users.UserManageSimpleViewModel> args)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        ViewModels.FilterItem filterColumn = new ViewModels.FilterItem()
+            {
+                Field = args.Column.Property,
+                Operator = args.Column.FilterOperator.ToString(),//.Replace("Equals", "eq"),
+                Value = args.Column.GetFilterValue(),
+            };
+
+        if (lstFilterItemsUserRole.Exists(c => c.Field == args.Column.Property))
+        {
+            await filterItemsRemoveUserRole(args.Column.Property);
+        }
+        lstFilterItemsUserRole.Add(filterColumn);
+
+        await UserRoleBindGrid();
+
+        StateHasChanged();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task OnUserRoleFilterClearedGrid(DataGridColumnFilterEventArgs<ViewModels.Users.UserManageSimpleViewModel> args)
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        if (lstFilterItemsUserRole.Exists(c => c.Field == args.Column.Property))
+        {
+            await filterItemsRemoveUserRole(args.Column.Property);
+        }
+
+        await UserRoleBindGrid();
+
+        StateHasChanged();
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task sortItemsRemoveUserRole(string strField)
+    {
+        await Task.Run(() =>
+            {
+                int index = 0;
+                if (lstSortItemsUserRole.Count > 0)
+                {
+                    foreach (var sortItem in lstSortItemsUserRole)
+                    {
+                        if (sortItem.Field == strField)
+                            break;
+                        index++;
+                    }
+
+                    lstSortItemsUserRole.RemoveAt(index);
+                }
+            });
+    }
+
+    private async Task filterItemsRemoveUserRole(string strField)
+    {
+        await Task.Run(() =>
+            {
+                int index = 0;
+                if (lstFilterItemsUserRole.Count > 0)
+                {
+                    foreach (var filterItem in lstFilterItemsUserRole)
+                    {
+                        if (filterItem.Field == strField)
+                            break;
+                        index++;
+                    }
+
+                    lstFilterItemsUserRole.RemoveAt(index);
+                }
+            });
+    }
+
+    //private async Task UserRolePageChangedGrid(int pageNum) // if They didn't add Pagination this method must get remove
+    //{
+    //	IsFormProgressing = true;
+    //	// ********************
+
+    //	await UserRoleBindGrid(pageNum);
+
+    //	// ********************
+    //	IsFormProgressing = false;
+    //}
+
+    #endregion
+
+    #region RoleMenu Events
+
+    private async Task OnRoleMenuSubmitAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+        if (lstDelete.Count == 0 && lstAdd.Count == 0)
+        {
+            foreach (var menu in lstMenu)
+            {
+                if (menu.IsSelected == true)
+                {
+                    lstAdd.Add(menu.MenuId.ToString());
+                }
+                else
+                {
+                    lstDelete.Add(menu.MenuId.ToString());
+                }
+            }
+        }
+
+        bool flagResult = true;
+
+        flagResult = await RoleMenuDeleteAsync(lstDelete);
+        lstDelete = flagResult ? new List<string>() : lstDelete;
+
+        if (flagResult)
+        {
+            flagResult = await RoleMenuAddAsync(lstAdd);
+            if (flagResult)
+            {
+                lstAdd = new List<string>();
+                await RoleMenuBindGrid();
+            }
+        }
+        else
+        {
+            await RoleMenuBindGrid();
+        }
+
+        if (!(lstDelete.Count == 0 && lstAdd.Count == 0))
+        {
+            IsSelectionRemained = true;
+        }
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task<bool> RoleMenuAddAsync(List<string> lst)
+    {
+        RoleMenuNewModel = new ViewModels.RoleMenus.RoleMenuCreateViewModel()
+            {
+                MenusId = lst,
+                RoleId = PassedRoleManageModel.Id,
+            };
+
+        var varResult = await RoleMenusService.AddRoleToMenuAsync(RoleMenuNewModel);
+        bool flagReturn = false;
+        if (varResult != null)
+        {
+            lstNotifications.Clear();
+            flagReturn = varResult.IsSuccess;
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        return flagReturn;
+    }
+
+    private async Task<bool> RoleMenuDeleteAsync(List<string> lst)
+    {
+        IsFormProgressing = true;
+        // ********************
+        bool flagResult = false;
+        ViewModels.RoleMenus.RoleMenuDeleteViewModel inputParamsViewModel = new ViewModels.RoleMenus.RoleMenuDeleteViewModel()
+            {
+                MenusId = lst,
+                RoleId = PassedRoleManageModel.Id,
+            };
+
+        var varResult = await RoleMenusService.DeleteRoleMenuAsync(inputParamsViewModel);
+        if (varResult != null)
+        {
+
+            lstNotifications.Clear();
+            if (varResult.IsSuccess)
+            {
+                lstDelete = new List<string>();
+                flagResult = true;
+
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        await RoleMenuBindGrid();
+        // ********************
+        IsFormProgressing = false;
+
+        return flagResult;
+    }
+
+    private void passingRoleMenuModel(ViewModels.Users.UserManageSimpleViewModel viewModel)
+    {
+        UserManageSimpleModel = viewModel;
+    }
+
+    private void CheckAllUnCheckAllHandler(bool value)
+    {
+        if (IsSelectionRemained)
+        {
+            lstAdd = new List<string>();
+            lstDelete = new List<string>();
+            IsSelectionRemained = false;
+        }
+
+        foreach (var item in lstMenu)
+        {
+            if (value)
+            {
+                item.IsSelected = true;
+            }
+            else
+            {
+                item.IsSelected = false;
+            }
+        }
+    }
+
+    private void HeaderSelectedHandler(int id, bool value)
+    {
+        if (IsSelectionRemained)
+        {
+            lstAdd = new List<string>();
+            lstDelete = new List<string>();
+            IsSelectionRemained = false;
+        }
+
+        foreach (var item in lstMenu)
+        {
+            if (item.ParentIdString == $"/{id}/")
+            {
+                if (!value)
+                {
+                    item.IsSelected = true;
+                }
+                else
+                {
+                    item.IsSelected = false;
+                }
+            }
+        }
+    }
+
+    private void SubsSelectedHandler(ViewModels.RoleMenus.RoleMenuManageSelectedViewModel parentMenu, ViewModels.RoleMenus.RoleMenuManageSelectedViewModel subMenu)
+    {
+        if (IsSelectionRemained)
+        {
+            lstAdd = new List<string>();
+            lstDelete = new List<string>();
+            IsSelectionRemained = false;
+        }
+
+        subMenu.IsSelected = !subMenu.IsSelected;
+
+        bool isOneSelected = false;
+
+        foreach (var model in lstMenu)
+        {
+            if (model.ParentIdString == $"/{parentMenu.MenuId}/" && model.IsSelected)
+            {
+                isOneSelected = true;
+            }
+        }
+
+        parentMenu.IsSelected = isOneSelected;
+    }
+
+    private async Task RoleMenuBindGrid(int pageNumber = Infrastructure.Utility.PageNumber)
+    {
+        if (refMenuId != null)
+        {
+            var varRoleMenuIds = await RoleMenusService.FetchByRoleIdAsync(new Guid(PassedRoleManageModel.Id));
+            if (varRoleMenuIds != null)
+            {
+                lstMenu = varRoleMenuIds.Value;
+
+            }
+        }
+    }
+
+    #endregion
+
+    #endregion
+}

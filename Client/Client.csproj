@@ -1,0 +1,121 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Pages\Personnels\**" />
+	  <Compile Remove="Pages\PersonnelTaskTimes\**" />
+	  <Compile Remove="Pages\Projects\**" />
+	  <Compile Remove="Pages\Tasks\**" />
+	  <Content Remove="Pages\Personnels\**" />
+	  <Content Remove="Pages\PersonnelTaskTimes\**" />
+	  <Content Remove="Pages\Projects\**" />
+	  <Content Remove="Pages\Tasks\**" />
+	  <EmbeddedResource Remove="Pages\Personnels\**" />
+	  <EmbeddedResource Remove="Pages\PersonnelTaskTimes\**" />
+	  <EmbeddedResource Remove="Pages\Projects\**" />
+	  <EmbeddedResource Remove="Pages\Tasks\**" />
+	  <None Remove="Pages\Personnels\**" />
+	  <None Remove="Pages\PersonnelTaskTimes\**" />
+	  <None Remove="Pages\Projects\**" />
+	  <None Remove="Pages\Tasks\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Services\PersonnelsService.cs" />
+	  <Compile Remove="Services\PersonnelTaskTimesService.cs" />
+	  <Compile Remove="Services\ProjectsService.cs" />
+	  <Compile Remove="Services\TasksService.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.rtl.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.rtl.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.rtl.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-grid.rtl.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.rtl.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.rtl.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.rtl.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-reboot.rtl.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.rtl.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.rtl.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.rtl.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap-utilities.rtl.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.rtl.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.rtl.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.rtl.min.css" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\css\bootstrap.rtl.min.css.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.js" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.js.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.min.js" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.bundle.min.js.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.js" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.js.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.min.js" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.esm.min.js.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.js" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.js.map" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.min.js" />
+	  <Content Remove="C:\Users\m.samani\.nuget\packages\bootstrap\5.2.3\contentFiles\any\any\wwwroot\js\bootstrap.min.js.map" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
+		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.31" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.31" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.31" />
+		<PackageReference Include="MudBlazor" Version="6.19.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Radzen.Blazor" Version="4.32.3" />
+		<PackageReference Include="System.Net.Http.Json" Version="6.0.1" />
+		<PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\content\fonts\IranSans\woff2\IRANSansWeb%28FaNum%29.woff2" />
+	  <None Include="wwwroot\content\fonts\IranSans\woff2\IRANSansWeb%28FaNum%29_Black.woff2" />
+	  <None Include="wwwroot\content\fonts\IranSans\woff2\IRANSansWeb%28FaNum%29_Bold.woff2" />
+	  <None Include="wwwroot\content\fonts\IranSans\woff2\IRANSansWeb%28FaNum%29_Light.woff2" />
+	  <None Include="wwwroot\content\fonts\IranSans\woff2\IRANSansWeb%28FaNum%29_Medium.woff2" />
+	  <None Include="wwwroot\content\fonts\IranSans\woff2\IRANSansWeb%28FaNum%29_UltraLight.woff2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Nazm.Results\Nazm.Results.csproj" />
+	  <ProjectReference Include="..\NazmMapping\NazmMapping.csproj" />
+	  <ProjectReference Include="..\NazmProtection\NazmProtection.csproj" />
+	  <ProjectReference Include="..\Nazm\Nazm.csproj" />
+	  <ProjectReference Include="..\Resources\Resources.csproj" />
+	  <ProjectReference Include="..\ViewModels\ViewModels.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\lib\" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,275 @@
+﻿@inherits LayoutComponentBase
+
+@layout MainLayout
+
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.Tokens.ITokensService TokensService;
+@inject Services.MenusService MenusService;
+
+<MudThemeProvider />
+<MudSnackbarProvider />
+
+<div class="container-fluid">
+    @if (string.IsNullOrWhiteSpace(HeaderTitle) == false)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="">
+                    <i class="mdi mdi-24px mdi-@(MenuIcon) verticalMiddle"></i>
+                    <span class="">@(HeaderTitle)</span>
+                    @* <button type="button" class="btn btn-link btn-sm" title="@(Resources.Buttons.Info)" data-bs-toggle="modal" data-bs-target="#modalPageDescription">
+                        <i class="mdi mdi-24px mdi-information-variant-circle-outline verticalMiddle"></i>
+                    </button> *@
+                </h4>
+                <hr />
+            </div>
+        </div>
+    }
+    @*@PageContent*@
+    @Body
+</div>
+
+<NazmModal UniqueId="modalPageDescription"
+           RequiredClose="false"
+           SizeType="Infrastructure.Enums.ModalClass.ModalSizeType.xl"
+           IconType="Infrastructure.Enums.ModalClass.ModalIconType.Info"
+           Title="@(Resources.Buttons.Info)">
+    <Body>
+        @(PageDescription)
+    </Body>
+</NazmModal>
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+@code {
+    // ********************
+    #region Properties
+
+    public string MenuIcon { get; set; }
+
+    public string HeaderTitle { get; set; }
+    
+    public string PageDescription { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    //[Parameter]
+    //public RenderFragment? PageContent { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        MenuIcon = string.Empty;
+
+        HeaderTitle = string.Empty;
+        
+        PageDescription = string.Empty;
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+        //Console.WriteLine("NazmLayout : OnInitializedAsync");
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        /* MockData User
+        string strUserName = await myStorage.GetItemAsync<string>(Infrastructure.Utility.Key_UserName);
+        Infrastructure.MockData.UserClass user = await UserMockService.GetInstance().findByUserNameAsync(strUserName);
+
+            if (user == null)
+            {
+            string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Login>()}";
+            NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        }
+        */
+
+        var tokenResult = await TokensService.GetToken();
+
+        //Console.WriteLine($"token: {tokenResult == null}");
+        //Console.WriteLine($"IsNullOrWhiteSpace: {string.IsNullOrWhiteSpace(tokenResult?.Token)}");
+        //Console.WriteLine($"Expiration: {tokenResult?.Expiration.Date < DateTime.Now.Date}");
+        //Console.WriteLine($"token: {tokenResult?.Token}");
+        //Console.WriteLine($"Expiration: {tokenResult?.Expiration}");
+
+        if (tokenResult == null)
+        {
+            await redirectToLoginAsync();
+        }
+        else if (string.IsNullOrWhiteSpace(tokenResult.Token) || tokenResult.Expiration.Date < DateTime.Now.Date)
+        {
+            lstNotifications.Add(NotificationSettingsClass.setNotification(Resources.Messages.Errors.PermissionAccess, Infrastructure.Enums.MessageType.Error));
+            await redirectToLoginAsync();
+        }
+        else
+        {
+
+        }
+
+        await setHeaderTitleAsync();
+
+        //Console.WriteLine("NazmLayout : OnParametersSet || OnParametersSetAsync");
+    }
+
+    protected override bool ShouldRender()
+    {
+        //Console.WriteLine("NazmLayout : ShouldRender");
+        return base.ShouldRender();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        //await JsRuntime.InvokeVoidAsync("bootstrapToggleInit");
+
+        //Console.WriteLine("NazmLayout : OnAfterRender || OnAfterRenderAsync");
+        //Console.WriteLine("-----------------------------------");
+    }
+
+    private async Task redirectToLoginAsync()
+    {
+        await Task.Run(() =>
+        {
+            string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Login>()}";
+            NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        });
+    }
+
+    private async Task redirectToErrorPageAsync()
+    {
+        await Task.Run(() =>
+        {
+            string uri = $"{Infrastructure.Utility.setUri<Client.Pages.ErrorPage>()}";
+            NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+        });
+    }
+
+    private async Task setHeaderTitleAsync()
+    {
+        try
+        {
+            object paramMenuId = null;
+            if ((this.Body.Target as RouteView)?.RouteData.RouteValues?.TryGetValue("refMenuId", out paramMenuId) == true)
+            {
+                if (paramMenuId != null)
+                {
+                    int menuId = Convert.ToInt32(paramMenuId.ToString());
+
+                    var varMenu = await MenusService.FindByIdAsync(menuId);
+                    if (varMenu != null)
+                    {
+                        string strMenuUrl = $"{varMenu.Url.TrimStart('/')}/{varMenu.MenuId}";
+                        string[] lstMenuUrl = strMenuUrl.Split('/');
+
+                        string strUri = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length);
+                        string[] lstUri = strUri.Split('/');
+
+                        string strUriFix = string.Empty;
+                        if (lstUri.Count() > 3)
+                        {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                strUriFix += $"{lstUri[i]}/";
+                            }
+                            strUriFix = strUriFix.TrimEnd('/');
+                        }
+                        else
+                        {
+                            strUriFix = strUri;
+                        }
+
+                        string[] lstUriFix = strUri.Split('/');
+
+                        //Console.WriteLine("-------------------------------------------");
+                        //Console.WriteLine($"strMenuUrl: {strMenuUrl}");
+                        //Console.WriteLine($"strUri: {strUri}");
+                        //Console.WriteLine($"strUriFix: {strUriFix}");
+                        if (lstUriFix[0] == "Prepration")
+                        {
+                            lstNotifications.Add(NotificationSettingsClass.setNotification(Resources.DataDictionary.Prepration, Infrastructure.Enums.MessageType.Info));
+                        }
+
+                        string strSection = string.Empty;
+
+                        if (strUriFix != strMenuUrl)
+                        {
+                            if (varMenu.EntityName != null)
+                            {
+                                foreach (var item in lstUriFix)
+                                {
+                                    bool isDetails = varMenu.EntityName.Contains(item);
+                                    if (isDetails)
+                                    {
+                                        strSection = await setSectionTitle(item);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                strSection = await setSectionTitle(lstUriFix[1]);
+                            }
+                        }
+
+                        MenuIcon = $"{varMenu.MenuIcon}";
+                        HeaderTitle = $"{varMenu.PageTitle}{strSection}";
+                        PageDescription = $"{varMenu.PageDescription}";
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex.Message}");
+        }
+    }
+
+    private async Task<string> setSectionTitle(string input)
+    {
+        string strSection = string.Empty;
+
+        await Task.Run(async () =>
+        {
+            switch (input.ToLower())
+            {
+                case "create":
+                    strSection = $" / {Resources.Buttons.Create}";
+                    break;
+                case "edit":
+                    strSection = $" / {Resources.Buttons.Edit}";
+                    break;
+                default:
+                    strSection = $" / { await getMenuNameOfResourceAsync(input)}";
+                    break;
+            }
+        });
+
+        return strSection;
+    }
+
+    private async Task<string> getMenuNameOfResourceAsync(string propertyName)
+    {
+        string resourceValue = null;
+        await Task.Run(() =>
+        {
+            System.Resources.ResourceManager resourceManager = 
+                new System.Resources.ResourceManager("Resources.MenuDetails", typeof(Resources.MenuDetails).Assembly);
+
+            resourceValue = resourceManager.GetString(propertyName);
+        });
+
+        return resourceValue;
+    }
+
+    #endregion
+}

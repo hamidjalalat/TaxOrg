@@ -1,0 +1,67 @@
+﻿@page "/Tasks/Edit/{Id:guid}"
+
+@inject NavigationManager NavigationManager
+@inject Services.TasksService TasksService;
+
+@(Id)
+
+<FormEditor 
+	Model="Model"
+	OnValidSubmit="OnSubmitAsync"
+	Type="Infrastructure.Enums.EditFormType.Edit">
+</FormEditor>
+
+@code
+{
+	//protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
+	{
+		Model =
+			new ViewModels.Tasks.TaskViewModel();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		try
+		{
+			//Model = TasksService.GetByIdAsync(Id).Result;
+			Model = await TasksService.GetByIdAsync(Id);
+		}
+		catch (Exception ex)
+		{
+			string str = ex.Message;
+		}
+	}
+
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	public ViewModels.Tasks.TaskViewModel Model { get; set; }
+	private ViewModels.Tasks.TaskViewModel NewModel { get; set; }
+
+	//private void OnSubmit()
+	private async Task OnSubmitAsync()
+	{
+		// Save Data!
+		//Save();
+		await SaveAsync();
+
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Tasks.List>() }";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	//private async void Save()
+	private async Task SaveAsync()
+	{
+		NewModel = new ViewModels.Tasks.TaskViewModel()
+			{
+				Id = Model.Id,
+				Title = Model.Title,
+			};
+
+		var varResult = await TasksService.PutAsync(NewModel);
+
+	}
+
+}

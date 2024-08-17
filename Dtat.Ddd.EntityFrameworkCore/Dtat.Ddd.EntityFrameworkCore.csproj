@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="IUnitOfWork.cs" />
+	  <Compile Remove="IUnitOfWorkQuery.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DTAT.DDD" Version="1.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.31" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Anemic\" />
+	</ItemGroup>
+
+</Project>

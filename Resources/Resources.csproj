@@ -1,0 +1,99 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Pluralize.NET.Core" Version="1.0.0" />
+	  <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Buttons.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Buttons.resx</DependentUpon>
+		</Compile>
+		<Compile Update="ButtonsIcon.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>ButtonsIcon.resx</DependentUpon>
+		</Compile>
+		<Compile Update="DataDictionary.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>DataDictionary.resx</DependentUpon>
+		</Compile>
+		<Compile Update="DefaultValues.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>DefaultValues.resx</DependentUpon>
+		</Compile>
+		<Compile Update="MenuDetails.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>MenuDetails.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Messages\Common.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Common.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Messages\Errors.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Errors.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Messages\Successes.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Successes.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Messages\Validations.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Validations.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Buttons.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="ButtonsIcon.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>ButtonsIcon.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="DataDictionary.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>DataDictionary.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="DefaultValues.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>DefaultValues.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="MenuDetails.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>MenuDetails.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Messages\Common.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Common.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Messages\Errors.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Errors.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Messages\Successes.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Successes.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Messages\Validations.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Validations.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

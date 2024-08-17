@@ -1,0 +1,102 @@
+﻿@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+@inject Infrastructure.Utility UtilityClass;
+
+<div class="row">
+
+    <div class="col-md-2 d-flex flex-column align-center pt-4">
+        <div class="input-group">
+            <input type="number" @bind-value="@(PageSize)" class="form-control  rounded-start" title="@(Resources.Buttons.PageSizeChange)" placeholder="@(Resources.Buttons.PageSizeChange)" aria-describedby="pageSizeInput">
+            <button id="pageSizeInput" type="button" class="btn btn-primary btn-sm rounded-0 rounded-start" title="@(Resources.Buttons.PageSizeChange)" @onclick="() => HandleEventPageSizeChanged(PageSize)">
+                <i class="@(Resources.ButtonsIcon.PageSizeChange) @(Resources.DefaultValues.IconSize18)"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <div class="col-md-10 d-flex flex-column align-center">
+        @*<RadzenPager HorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
+        PageSize="@(Infrastructure.Utility.PageSize)" PageChanged="@(HandleEventPageNumberChanged_Radzen)"
+        Count="@(TotalCount)" PageNumbersCount="@(TotalPages)" PagingSummaryFormat="@(Resources.Messages.Common.PagingSummaryFormat)" />*@
+
+        <MudPagination Rectangular="true" ShowFirstButton="true" ShowLastButton="true" BoundaryCount="1"
+                       Size="MudBlazor.Size.Medium" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Class="my-4"
+                       FirstIcon="@(Resources.ButtonsIcon.IconFirst)" NextIcon="@(Resources.ButtonsIcon.IconNext)"
+                       LastIcon="@(Resources.ButtonsIcon.IconLast)" BeforeIcon="@(Resources.ButtonsIcon.IconBefore)"
+                       Count="@(TotalPages)" Selected="@(PageNumber)" SelectedChanged="@(HandleEventPageNumberChanged)" />
+
+        <p>@(string.Format(Resources.Messages.Common.PagingSummaryFormat, 
+            UtilityClass.setSeparatedDigits($"{PageNumber}"), 
+            UtilityClass.setSeparatedDigits($"{TotalPages}"), 
+            UtilityClass.setSeparatedDigits($"{TotalCount}")))</p>
+    </div>
+</div>
+
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+
+@code {
+
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int TotalCount { get; set; }
+
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public int PageNumber { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; }
+
+    [Parameter]
+    public EventCallback<int> EventPageNumberChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<int> EventPageSizeChanged { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+    }
+
+    private void HandleEventPageNumberChanged(int pageNum)
+    {
+        var result = EventPageNumberChanged.InvokeAsync(pageNum);
+    }
+
+    //private void HandleEventPageNumberChanged_Radzen(PagerEventArgs args)
+    //{
+    //    int intPageNum = args.PageIndex + 1;
+    //    var result = EventPageNumberChanged.InvokeAsync(intPageNum);
+    //}
+
+    private void HandleEventPageSizeChanged(int pageSize)
+    {
+        if (pageSize <= Infrastructure.Utility.PageSize1000 && pageSize >= Infrastructure.Utility.PageSize3)
+        {
+            var result = EventPageSizeChanged.InvokeAsync(pageSize);
+        }
+        else
+        {
+            var notify = string.Format(Resources.Messages.Validations.Range, Resources.DataDictionary.PageSize, Infrastructure.Utility.PageSize3, Infrastructure.Utility.PageSize1000);
+            lstNotifications.Add(NotificationSettingsClass.setNotification(notify, Infrastructure.Enums.MessageType.Error));
+        }
+    }
+    #endregion
+
+}

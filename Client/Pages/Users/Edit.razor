@@ -1,0 +1,148 @@
+﻿@page "/Users/Edit/{refMenuId:int?}/{Id:guid?}"
+
+@inject NavigationManager NavigationManager
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.UserManagesService UserManagesService;
+
+
+@if (IsFormLoading)
+{
+    <NazmLoading IsShow="true" />
+}
+else
+{
+
+	@if (IsFormProgressing)
+	{
+		<NazmLoadingProgress IsShow="true" />
+	}
+
+	@if (refMenuId != null && Id != null)
+	{
+		<FormEditor 
+			 Model="Model"
+			 OnValidSubmit="OnSubmitAsync"
+			 Type="Infrastructure.Enums.EditFormType.Edit"
+			 refMenuId="refMenuId">
+		</FormEditor>
+
+	}
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+
+@code
+{
+	// ********************
+	#region Properties
+
+	[Parameter]
+	public int? refMenuId { get; set; }
+
+	[Parameter]
+	public Guid? Id { get; set; }
+
+	public bool IsFormLoading { get; set; }
+	public bool IsFormProgressing { get; set; }
+
+	private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+	public ViewModels.Users.UserManageViewModel Model { get; set; }
+	private ViewModels.Users.UserManageUpdateViewModel NewModel { get; set; }
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	protected override async Task OnInitializedAsync()
+	{
+		IsFormLoading = true;
+		// ********************
+		await base.OnInitializedAsync();
+		Model =
+			new ViewModels.Users.UserManageViewModel();
+
+		lstNotifications = new List<Infrastructure.NotificationSettings>();
+		// ********************
+		IsFormLoading = false;
+
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		IsFormLoading = true;
+		// ********************
+		try
+		{
+			if (refMenuId != null && Id != null)
+				Model = await UserManagesService.FindByIdAsync(Id.Value);
+		}
+		catch (Exception ex)
+		{
+			string str = ex.Message;
+		}
+		// ********************
+		IsFormLoading = false;
+
+	}
+
+	private async Task OnSubmitAsync()
+	{
+		IsFormProgressing = true;       
+		// ********************
+		bool flagResult = await SaveAsync();
+		if (flagResult)
+		{
+
+			string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Users.List>()}/{refMenuId.Value}";
+			NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		}
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task<bool> SaveAsync()
+	{
+		NewModel = new ViewModels.Users.UserManageUpdateViewModel()
+		{
+			Id = Model.Id,
+            FirstName = Model.FirstName,
+            LastName = Model.LastName,
+            NationalCode = Model.NationalCode,
+            Gender = Model.Gender,
+            Email = Model.Email,
+            UserName = Model.UserName,
+            //Password = Model.Password,
+            //ConfirmPassword = Model.ConfirmPassword
+		};
+		var varResult = await UserManagesService.EditUserAsync(NewModel);
+
+		bool flagReturn = false;
+		if (varResult != null)
+		{
+			lstNotifications.Clear();
+			flagReturn = varResult.IsSuccess;
+			if (varResult.IsSuccess)
+			{
+				if (varResult.Successes.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Successes, Infrastructure.Enums.MessageType.Success));
+			}
+			if (varResult.IsFailed)
+			{
+				if (varResult.Errors.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Errors, Infrastructure.Enums.MessageType.Error));
+			}
+		}
+
+		return flagReturn;
+	}
+
+	#endregion
+}

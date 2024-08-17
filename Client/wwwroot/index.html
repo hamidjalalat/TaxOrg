@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title>شرکت مهندسین مشاور نظم آران</title>
+    <base href="/" />
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="lib/bootstrap/css/bootstrap.rtl.min.css" rel="stylesheet" />
+
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="Client.styles.css" rel="stylesheet" />
+
+    <link href="content/fonts/fonts.googleapis.min.css" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css">
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/standard-base.css">
+
+    <link href="content/Themes/MainTheme/mdi/css/materialdesignicons.min.css" rel="stylesheet" />
+    <!--<link href="content/Themes/MainTheme/css/vendor.bundle.base.css" rel="stylesheet" />-->
+    <link href="content/Themes/MainTheme/css/style.min.css" rel="stylesheet" />
+    <link href="content/Themes/MainTheme/css/style-cust.css" rel="stylesheet" />
+    <link href="content/fonts/IranSans/IranSansStyle.min.css" rel="stylesheet" />
+    <link href="content/fonts/BYekan/BYekanStyle.min.css" rel="stylesheet" />
+
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="content/favicons/apple-touch-icon.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="content/favicons/favicon.ico">
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="nazm-loading"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <!--<script>
+        Blazor.start({
+            applicationCulture: 'fa-IR'
+        });
+    </script>-->
+    <!-- Tools -->
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
+    <!-- Tools -->
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/popper/umd/popper.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <!--<script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>-->
+    <script src="lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+
+    <!--<script src="./content/Themes/MainTheme/js/vendor.bundle.base.min.js"></script>-->
+    <script src="./content/Themes/MainTheme/js/off-canvas.min.js"></script>
+    <script src="./content/Themes/MainTheme/js/hoverable-collapse.min.js"></script>
+    <script src="./content/Themes/MainTheme/js/misc.min.js"></script>
+
+    <script src="lib/echarts/echarts.min.js"></script>
+    <script src="./content/script/echarts-cust.js"></script>
+    <script src="./content/script/js-cust.js"></script>
+
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js');
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+﻿
+<InputNumber id="@(UniqueId)" class="@(CSS)" style="@(Style)" placeholder="@(Placeholder)" TValue="int"
+             Value="@(ValueProperty)" ValueChanged="@((eventArgs) => OnValueChanged(eventArgs))" ValueExpression="() => ValueProperty"
+             readonly="@(IsReadOnly)" @attributes="AdditionalAttributes" />
+
+
+
+
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter, EditorRequired]
+    public string UniqueId { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
+
+    [Parameter]
+    public int ValueProperty { get; set; }
+
+    [Parameter]
+    public int MaxLength { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChangedEventHandler { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Console.WriteLine($"Placeholder {Placeholder}");
+
+        Placeholder = (Placeholder == null) ? string.Empty : Placeholder;
+
+        MaxLength = (MaxLength == 0) ? 5 : MaxLength;
+
+    }
+
+    private async Task OnValueChanged(int value)
+    {
+        string strValue = value.ToString();
+        if(strValue.Length > MaxLength)
+        {
+            strValue = strValue.Substring(0, (MaxLength));
+            value = int.Parse(strValue);
+        }
+
+        // ValueProperty = value;
+
+        await ValueChangedEventHandler.InvokeAsync(value);
+    }
+
+    #endregion
+}

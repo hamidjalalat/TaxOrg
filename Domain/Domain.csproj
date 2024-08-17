@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DTAT" Version="1.0.4" />
+		<PackageReference Include="DTAT.DDD" Version="1.0.4" />
+		<PackageReference Include="DTAT.Security" Version="1.0.0" />
+		<PackageReference Include="EntityFrameworkCore.Data.AutoHistory" Version="6.0.21" />
+		<PackageReference Include="EntityFrameworkCore.SqlServer.HierarchyId" Version="3.0.1" />
+		<PackageReference Include="FluentResults" Version="3.15.2" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.31" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Resources\Resources.csproj" />
+	</ItemGroup>
+
+</Project>

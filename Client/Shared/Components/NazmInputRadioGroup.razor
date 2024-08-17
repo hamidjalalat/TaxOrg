@@ -1,0 +1,53 @@
+﻿
+<div>
+    <label for="radioButtonGroup" class="form-label">
+        <InputRadioGroup id="radioButtonGroup" class="form-control"
+            TValue="int" Value="@(InputSelectedID)"
+            ValueChanged="@((eventArgs) => OnValueChanged(eventArgs))"
+            ValueExpression="() => InputSelectedID">
+            @foreach (var item in Options)
+            {
+                <InputRadio id="@(item.Title)" Value="@(item.Id)" />
+                <label class="mx-1" for="@(item.Title)">@(item.Title)</label>
+@*                 <label for="@(item.Title)">@(Infrastructure.Utility.GetInstance().getNameOfResource(item.Title))</label> *@
+            }
+        </InputRadioGroup>
+    </label>
+</div>
+
+@code {
+        // ********************
+        #region Properties
+
+        [Parameter]
+        public IEnumerable<Infrastructure.ComboClass> Options { get; set; }
+
+        [Parameter]
+        public int SelectedID { get; set; }
+
+        [Parameter]
+        public EventCallback<int> OnEventChange { get; set; }
+
+        private int InputSelectedID { get; set; }
+
+        #endregion
+
+        // ********************
+        #region Events
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            InputSelectedID = SelectedID;
+
+        }
+
+        private void OnValueChanged(int value)
+        {
+            InputSelectedID = value;
+            var result = OnEventChange.InvokeAsync(InputSelectedID);
+        }
+
+        #endregion
+}

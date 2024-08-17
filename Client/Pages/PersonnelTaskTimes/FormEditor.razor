@@ -1,0 +1,132 @@
+﻿@inject NavigationManager NavigationManager
+@inject Services.PersonnelsService PersonnelsService
+@*@inject Services.TasksService TasksService*@
+
+<EditForm Model="Model" OnValidSubmit="HandleValidSubmitAsync">
+	<ValidationSummary />
+	<FluentValidationValidator />
+	<DataAnnotationsValidator />
+
+	<div class="form-group">
+		<label for="personnel">@(Resources.DataDictionary.PersonnelId)</label>
+		<InputSelect id="personnel" class="form-control" @bind-Value="Model.PersonnelId">
+			@if(ListPersonnels != null)
+			{
+				<option value="">@Resources.Messages.Validations.PleaseSelectOne</option>
+				@foreach (var item in ListPersonnels)
+				{
+					<option value="@item.Id">@item.FirstName @item.LastName </option>
+				}
+			}
+		</InputSelect>
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.PersonnelId" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="personnel">@(Resources.DataDictionary.TaskId)</label>
+		<InputSelect id="personnel" class="form-control" @bind-Value="Model.TaskId">
+			@if(ListTasks != null)
+			{
+				<option value="">@Resources.Messages.Validations.PleaseSelectOne</option>
+				@foreach (var item in ListTasks)
+				{
+					<option value="@item.Id">@item.Title </option>
+				}
+			}
+		</InputSelect>
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.TaskId" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="workdate">@(Resources.DataDictionary.WorkDate)</label>
+		<InputDate id="workdate" class="form-control" @bind-Value="Model.WorkDate" />
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.WorkDate" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="worktime">@(Resources.DataDictionary.WorkTime)</label>
+		<InputNumber id="worktime" class="form-control" @bind-Value="Model.WorkTime" />
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.WorkTime" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="lastname">@(Resources.DataDictionary.Descript)</label>
+		<InputText id="lastname" class="form-control" @bind-Value="Model.Descript" />
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.Descript" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary">
+			@if (Type == Infrastructure.Enums.EditFormType.Create)
+			{
+				@(Resources.Buttons.Create)
+			}
+			else
+			{
+				@(Resources.Buttons.Save)
+			}
+		</button>
+		<button type="reset" class="btn btn-secondary">@(Resources.Buttons.Reset)</button>
+
+		<button type="button" class="btn btn-danger" @onclick="ReturnToList">@(Resources.Buttons.Return)</button>
+	</div>
+</EditForm>
+
+@code
+{
+	[Parameter]
+	public ViewModels.PersonnelTaskTimes.PersonnelTaskTimeViewModel Model { get; set; }
+
+	[Parameter]
+	public Infrastructure.Enums.EditFormType Type { get; set; }
+
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
+
+	private void HandleValidSubmitAsync()
+	{
+		var result = OnValidSubmit.InvokeAsync(null);
+	}
+
+	private void ReturnToList()
+	{
+		string uri = $"{Infrastructure.Pages.Utility.setUri<Client.Pages.PersonnelTaskTimes.List>()}";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		var varResultPersonnels = await PersonnelsService.GetAsync();
+		//var varResultTasks = await TasksService.GetAsync();
+
+		if (varResultPersonnels != null)
+		{
+			if (varResultPersonnels.IsSuccess)
+				ListPersonnels = varResultPersonnels.Value;
+		}
+
+		//if (varResultTasks != null)
+		//{
+		//	if (varResultTasks.IsSuccess)
+		//		ListTasks = varResultTasks.Value;
+		//}
+
+		ListTasks = new System.Collections.Generic.List<ViewModels.Tasks.TaskViewModel>();
+
+	}
+
+	public System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel> ListPersonnels { get; set; }
+	public System.Collections.Generic.IList<ViewModels.Tasks.TaskViewModel> ListTasks { get; set; }
+
+
+}

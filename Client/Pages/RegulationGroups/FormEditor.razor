@@ -1,0 +1,142 @@
+﻿@inject NavigationManager NavigationManager;
+
+@inject Services.RegulationGroupsService RegulationGroupsService;
+
+<div class="row">
+    <div class="col-md-6 mr-5">
+        <EditForm Model="Model" OnValidSubmit="HandleValidSubmitAsync">
+            <FluentValidationValidator />
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label for="code" class="form-label">@(Resources.DataDictionary.Code) :</label>
+                <InputNumber id="code" class="form-control" @bind-Value="Model.Code" />
+                <div class="form-control-validation">
+                    <ValidationMessage For="() => Model.Code" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="title" class="form-label">@(Resources.DataDictionary.Title) :</label>
+                <NazmInputText UniqueId="title"
+                             CSS="form-control"
+                             ValueProperty="@(Model.Title)"
+                             ValueChangedEventHandler="OnTextBoxValueChanged" />
+                <div class="form-control-validation">
+                    <ValidationMessage For="() => Model.Title" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="sort" class="form-label">@(Resources.DataDictionary.Sort) :</label>
+                <InputNumber id="sort" class="form-control" @bind-Value="Model.Sort" />
+                <div class="form-control-validation">
+                    <ValidationMessage For="() => Model.Sort" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="nazmActiveInActive" class="form-label">@(Resources.DataDictionary.IsActive) :</label>
+                <NazmActiveInactive 
+                    Model="@(Model.IsActive)"
+                    InputRadioGroupId="nazmActiveInActive"
+                    OnEventChange="OnIsActiveChange" />
+                <div class="form-control-validation">
+                    <ValidationMessage For="() => Model.IsActive" />
+                </div>
+            </div>
+
+            <div class="mb-3 float-start">
+                <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Return)" @onclick="ReturnToList">
+                    <i class="@(Resources.ButtonsIcon.Return) @(Resources.DefaultValues.IconSize24)"></i>
+                </button>
+
+                <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)">
+                    <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                </button>
+
+                @if (Errors != null)
+                {
+                    <hr />
+                    <div class="alert alert-danger" role="alert">
+                        @(Errors)
+                    </div>
+                }
+            </div>
+
+        </EditForm>
+    </div>
+</div>
+
+
+@code
+{
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    [Parameter]
+    public ViewModels.RegulationGroups.RegulationGroupViewModel Model { get; set; }
+
+    [Parameter]
+    public Infrastructure.Enums.EditFormType Type { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    public List<string> Errors { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    private void HandleValidSubmitAsync()
+    {
+        var result = OnValidSubmit.InvokeAsync(null);
+    }
+
+    private void ReturnToList()
+    {
+        string uri = $"{Infrastructure.Utility.setUri<Client.Pages.RegulationGroups.List>()}/{refMenuId.Value}";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+    }
+
+    private void OnIsActiveChange(bool value)
+    {
+        Model.IsActive = value;   
+    }
+
+    private async Task OnTextBoxValueChanged(string value)
+    {
+        Model.Title = value;
+    }
+
+    #endregion
+}
+
+
+
+@*
+
+<div class="mb-3">
+    <label for="nazmActiveInActive" class="form-label">@(Resources.DataDictionary.IsActive) :</label>
+    <NazmActiveInactive Model="@(Model.IsActive)"
+        InputRadioGroupId="nazmActiveInActive"
+        OnEventChange="OnIsActiveChange" />
+    <div class="form-control-validation">
+        <ValidationMessage For="() => Model.IsActive" />
+    </div>
+</div>
+
+private void OnIsActiveChange(bool value)
+{
+    Model.IsActive = value;
+}
+
+*@
+
+

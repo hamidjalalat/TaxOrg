@@ -1,0 +1,26 @@
+﻿@page "/Prepration/ViewPage/{refMenuId:int?}"
+
+
+
+<div>
+    <h3 class="mt-5 p-5">
+        @(Resources.DataDictionary.Prepration)
+    </h3>
+</div>
+
+
+@code
+{
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    #endregion
+}

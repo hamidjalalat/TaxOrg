@@ -1,0 +1,41 @@
+﻿@if (IsShow == true)
+{
+	@*<div class="nazm-loading"></div>*@
+
+	<div class="d-flex justify-content-center align-items-center" style="min-height: 500px; height: 100%;">
+		<div class="text-center">			
+			<h4>
+				@(Text)
+			</h4>
+			<div class="spinner-border" role="status"></div>
+			<br />
+			<div class="spinner-grow spinner-grow-sm text-warning" role="status">
+				<span class="visually-hidden"></span>
+			</div>
+			<div class="spinner-grow spinner-grow-sm text-success" role="status">
+				<span class="visually-hidden"></span>
+			</div>
+			<div class="spinner-grow spinner-grow-sm text-warning" role="status">
+				<span class="visually-hidden"></span>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	// ********************
+	#region Properties
+
+	[Parameter]
+	public bool IsShow { get; set; } = false;
+
+	[Parameter]
+	public string Text { get; set; } = Resources.Messages.Common.LoadingText;
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	#endregion
+}

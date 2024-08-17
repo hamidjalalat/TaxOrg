@@ -1,0 +1,159 @@
+﻿@page "/PersonnelTaskTimes/List"
+
+@inject IJSRuntime JsRuntime;
+@inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
+@inject Services.PersonnelTaskTimesService PersonnelTaskTimesService;
+
+<h3>
+	PersonnelTaskTimes List
+</h3>
+
+@(strMessage)
+
+@if (lstMain == null)
+{
+	<div>
+		Loading...
+	</div>
+}
+else
+{
+	<div class="row">
+		<div class="col">
+			<button type="button" class="btn btn-primary" @onclick="Create">@(Resources.Buttons.Create)</button>
+		</div>
+	</div>
+
+	<hr />
+	<div class="Row">
+		<div class="col table-responsive">
+			<table class="table table-bordered table-sm table-striped table-hover">
+				<thead>
+					<tr>
+						<th>
+							@(Resources.DataDictionary.RowNumber)
+						</th>
+						<th>
+							@(Resources.DataDictionary.Id)
+						</th>
+						<th>
+							@(Resources.DataDictionary.PersonnelId)
+						</th>
+						<th>
+							@(Resources.DataDictionary.TaskId)
+						</th>
+						<th>
+							@(Resources.DataDictionary.WorkDate)
+						</th>
+						<th>
+							@(Resources.DataDictionary.WorkTime)
+						</th>
+						<th>
+							@(Resources.DataDictionary.Descript)
+						</th>
+						<th>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int index = 0; index < lstMain.Count; index++)
+					{
+						var item = lstMain[index];
+						<tr>
+							<td>
+								@(index + 1)
+							</td>
+							<td>
+								@(item.Id)
+							</td>
+							<td>
+								@(item.PersonnelId)
+							</td>
+							<td>
+								@(item.TaskId)
+							</td>
+							<td>
+								@(item.WorkDate)
+							</td>
+							<td>
+								@(item.WorkTime)
+							</td>
+							<td>
+								@(item.Descript)
+							</td>
+							<td>
+								<button type="button" class="btn btn-warning btn-sm" @onclick="() => Edit(item)">
+									@(Resources.Buttons.Edit)
+								</button>
+								<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteAsync(item)">
+									@(Resources.Buttons.Delete)
+								</button>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		var varResult = await PersonnelTaskTimesService.GetAsync();
+
+		if (varResult != null)
+		{
+			strMessage = varResult.ToString();
+			if (varResult.IsSuccess)
+				lstMain = varResult.Value;
+		}
+		else
+		{
+			strMessage = "Nothing.........";
+		}
+	}
+
+	public System.Collections.Generic.IList<ViewModels.PersonnelTaskTimes.PersonnelTaskTimeViewModel> lstMain { get; set; }
+
+	public string strMessage = "Nothing";
+
+	private void Create()
+	{
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.PersonnelTaskTimes.Create>() }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	private void Edit(ViewModels.PersonnelTaskTimes.PersonnelTaskTimeViewModel viewModel)
+	{
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.PersonnelTaskTimes.Edit>() }/{ viewModel.Id }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	private async Task DeleteAsync(ViewModels.PersonnelTaskTimes.PersonnelTaskTimeViewModel viewModel)
+	{
+		bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the personnel : '{ viewModel.WorkDate } { viewModel.WorkTime }'?");
+		if (confirmed)
+		{
+			await PersonnelTaskTimesService.DeleteAsync(viewModel.Id.Value);
+
+			var varResult = await PersonnelTaskTimesService.GetAsync();
+			if (varResult != null)
+			{
+				if (varResult.IsSuccess)
+					lstMain = varResult.Value;
+			}
+		}
+
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.PersonnelTaskTimes.List>() }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	public void Dispose()
+	{
+
+	}
+
+}

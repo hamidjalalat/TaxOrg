@@ -1,0 +1,135 @@
+﻿@page "/Tasks/List"
+
+@inject IJSRuntime JsRuntime;
+@inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
+@inject Services.TasksService TasksService;
+
+<h3>
+	Task List
+</h3>
+
+@(strMessage)
+
+@if (lstMain == null)
+{
+	<div>
+		Loading...
+	</div>
+}
+else
+{
+	<div class="row">
+		<div class="col">
+			<button type="button" class="btn btn-primary" @onclick="Create">@(Resources.Buttons.Create)</button>
+		</div>
+	</div>
+
+	<hr />
+	<div class="Row">
+		<div class="col table-responsive">
+			<table class="table table-bordered table-sm table-striped table-hover">
+				<thead>
+					<tr>
+						<th>
+							@(Resources.DataDictionary.RowNumber)
+						</th>
+						<th>
+							@(Resources.DataDictionary.Id)
+						</th>
+						<th>
+							@(Resources.DataDictionary.Title)
+						</th>
+						<th>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int index = 0; index < lstMain.Count; index++)
+					{
+						var item = lstMain[index];
+						<tr>
+							<td>
+								@(index + 1)
+							</td>
+							<td>
+								@(item.Id)
+							</td>
+							<td>
+								@(item.Title)
+							</td>
+							<td>
+								<button type="button" class="btn btn-warning btn-sm" @onclick="() => Edit(item)">
+									@(Resources.Buttons.Edit)
+								</button>
+								<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteAsync(item)">
+									@(Resources.Buttons.Delete)
+								</button>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		var varResult = await TasksService.GetAsync();
+
+		if (varResult != null)
+		{
+			strMessage = varResult.ToString();
+			if (varResult.IsSuccess)
+				lstMain = varResult.Value;
+		}
+		else
+		{
+			strMessage = "Nothing.........";
+		}
+	}
+
+	public System.Collections.Generic.IList<ViewModels.Tasks.TaskViewModel> lstMain { get; set; }
+
+	public string strMessage = "Nothing";
+
+	private void Create()
+	{
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Tasks.Create>() }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	private void Edit(ViewModels.Tasks.TaskViewModel viewModel)
+	{
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Tasks.Edit>() }/{ viewModel.Id }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	private async Task DeleteAsync(ViewModels.Tasks.TaskViewModel viewModel)
+	{
+		bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the Task : '{ viewModel.Title } '?");
+		if (confirmed)
+		{
+			await TasksService.DeleteAsync(viewModel.Id.Value);
+
+			var varResult = await TasksService.GetAsync();
+			if (varResult != null)
+			{
+				if (varResult.IsSuccess)
+					lstMain = varResult.Value;
+			}
+		}
+
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Tasks.List>() }";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	public void Dispose()
+	{
+
+	}
+
+}

@@ -1,0 +1,26 @@
+﻿<p class="alert alert-warning">@(Message)</p>
+
+@code {
+
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public string Message { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (Message == null)
+            Message = Resources.Messages.Common.GridEmptyText;
+    }
+
+    #endregion
+
+}

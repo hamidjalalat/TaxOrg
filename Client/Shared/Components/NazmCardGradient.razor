@@ -1,0 +1,89 @@
+﻿<div class="stretch-card grid-margin">
+    <div id="@(UniqueId)" class="@(CSS) bg-gradient-@((CardBgGradient).ToString().ToLower())" style="@(Style)">
+        <div class="card-body">
+            @if(IsLink)
+            {
+                <a class="text-dark" href="@(HrefLink)" target="@(IsExternalLink? "_blank" : "")">
+                    <img src="./content/themes/maintheme/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <div class="d-flex mb-5">
+                        <div class="p-1 flex-grow-1">
+                            @(IconOrTextOne)
+                        </div>
+                        <div class="p-1 align-self-center">
+                            @(IconOrTextTwo)
+                        </div>
+                    </div>
+                    <h5 class="card-text">
+                        @(Title)
+                    </h5>
+                </a>
+            }
+            else
+            {
+                <img src="./content/themes/maintheme/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <div class="d-flex mb-5">
+                    <div class="p-1 flex-grow-1">
+                        @(IconOrTextOne)
+                    </div>
+                    <div class="p-1 align-self-center">
+                        @(IconOrTextTwo)
+                    </div>
+                </div>
+                <h5 class="card-text">
+                    @(Title)
+                </h5>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter, EditorRequired]
+    public string UniqueId { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public Infrastructure.Enums.CardBgGradientType CardBgGradient { get; set; }
+
+    [Parameter]
+    public bool IsLink { get; set; }
+
+    [Parameter]
+    public string HrefLink { get; set; }
+
+    [Parameter]
+    public bool IsExternalLink { get; set; }
+
+    [Parameter]
+    public RenderFragment IconOrTextOne { get; set; }
+
+    [Parameter]
+    public RenderFragment IconOrTextTwo { get; set; }
+
+    [Parameter]
+    public RenderFragment Title { get; set; }
+
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+
+    #endregion
+}

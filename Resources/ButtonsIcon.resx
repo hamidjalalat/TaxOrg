@@ -1,0 +1,354 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Active" xml:space="preserve">
+    <value>mdi mdi-account-check</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>mdi mdi-check-circle</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>mdi mdi-archive-plus</value>
+  </data>
+  <data name="Calculate" xml:space="preserve">
+    <value>mdi mdi-calculator-variant</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>mdi mdi-close-circle</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>mdi mdi-shield-key</value>
+  </data>
+  <data name="CheckAll" xml:space="preserve">
+    <value>mdi mdi-checkbox-multiple-marked-outline</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>mdi mdi-backspace</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>mdi mdi-close</value>
+  </data>
+  <data name="Confirm1" xml:space="preserve">
+    <value>mdi mdi-check</value>
+  </data>
+  <data name="Confirm2" xml:space="preserve">
+    <value>mdi mdi-check-all</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>mdi mdi-plus</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>mdi mdi-trash-can</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>mdi mdi-dots-horizontal</value>
+  </data>
+  <data name="DiscoveryAccountFlow" xml:space="preserve">
+    <value>mdi mdi-account-details-outline</value>
+  </data>
+  <data name="DiscoveryAccountHolderInfo" xml:space="preserve">
+    <value>mdi mdi-account-multiple-outline</value>
+  </data>
+  <data name="DiscoveryAccountInfo" xml:space="preserve">
+    <value>mdi mdi-credit-card-check-outline</value>
+  </data>
+  <data name="DiscoveryCustomerInfo" xml:space="preserve">
+    <value>mdi mdi-account</value>
+  </data>
+  <data name="DiscoveryExtra" xml:space="preserve">
+    <value>mdi mdi-account-star-outline</value>
+  </data>
+  <data name="DiscoveryMark" xml:space="preserve">
+    <value>mdi mdi-star-check-outline</value>
+  </data>
+  <data name="DiscoveryOpinion" xml:space="preserve">
+    <value>mdi mdi-comment-account-outline</value>
+  </data>
+  <data name="DiscoveryUserActionType" xml:space="preserve">
+    <value>mdi mdi-text-box-check-outline</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>mdi mdi-pencil</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>mdi mdi-close-circle-outline</value>
+  </data>
+  <data name="ExportExcel" xml:space="preserve">
+    <value>mdi mdi-microsoft-excel</value>
+  </data>
+  <data name="FileDelete" xml:space="preserve">
+    <value>mdi mdi-file-document-remove</value>
+  </data>
+  <data name="FileDownload" xml:space="preserve">
+    <value>mdi mdi-file-download</value>
+  </data>
+  <data name="FileUpload" xml:space="preserve">
+    <value>mdi mdi-cloud-upload</value>
+  </data>
+  <data name="FileUploadOpen" xml:space="preserve">
+    <value>mdi mdi-cloud-upload</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>mdi mdi-filter-cog</value>
+  </data>
+  <data name="FraudBranchResponse" xml:space="preserve">
+    <value>mdi mdi-bank-transfer-in</value>
+  </data>
+  <data name="FraudEvidenceReceive" xml:space="preserve">
+    <value>mdi mdi-cloud-download</value>
+  </data>
+  <data name="FraudEvidenceSend" xml:space="preserve">
+    <value>mdi mdi-cloud-upload</value>
+  </data>
+  <data name="FraudFinalization" xml:space="preserve">
+    <value>mdi mdi-account-check-outline</value>
+  </data>
+  <data name="FraudManualBlock" xml:space="preserve">
+    <value>mdi mdi-account-lock-outline</value>
+  </data>
+  <data name="FraudManualBlockCancel" xml:space="preserve">
+    <value>mdi mdi-account-lock-open-outline</value>
+  </data>
+  <data name="FraudManualLimit" xml:space="preserve">
+    <value>mdi mdi-account-cancel-outline</value>
+  </data>
+  <data name="FraudManualLimitCancel" xml:space="preserve">
+    <value>mdi mdi-account-off-outline</value>
+  </data>
+  <data name="FraudOpinion" xml:space="preserve">
+    <value>mdi mdi-comment-account-outline</value>
+  </data>
+  <data name="FraudSendToBranch" xml:space="preserve">
+    <value>mdi mdi-bank-transfer-out</value>
+  </data>
+  <data name="FraudSystemBlock" xml:space="preserve">
+    <value>mdi mdi-account-lock-outline</value>
+  </data>
+  <data name="FraudSystemBlockCancel" xml:space="preserve">
+    <value>mdi mdi-account-lock-open-outline</value>
+  </data>
+  <data name="FraudSystemLimit" xml:space="preserve">
+    <value>mdi mdi-account-cancel-outline</value>
+  </data>
+  <data name="FraudSystemLimitCancel" xml:space="preserve">
+    <value>mdi mdi-account-off-outline</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>mdi mdi-history</value>
+  </data>
+  <data name="HistoryAction" xml:space="preserve">
+    <value>mdi mdi-history</value>
+  </data>
+  <data name="IconBefore" xml:space="preserve">
+    <value>mdi mdi-chevron-right</value>
+  </data>
+  <data name="IconFirst" xml:space="preserve">
+    <value>mdi mdi-page-last</value>
+  </data>
+  <data name="IconLast" xml:space="preserve">
+    <value>mdi mdi-page-first</value>
+  </data>
+  <data name="IconNext" xml:space="preserve">
+    <value>mdi mdi-chevron-left</value>
+  </data>
+  <data name="InActive" xml:space="preserve">
+    <value>mdi mdi-account-remove</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>mdi mdi-information-variant-circle-outline</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>mdi mdi-login-variant</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>mdi mdi-power-standby</value>
+  </data>
+  <data name="Manual" xml:space="preserve">
+    <value>mdi mdi-hand-back-left-outline</value>
+  </data>
+  <data name="MenuOpen" xml:space="preserve">
+    <value>mdi mdi-menu-up</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>mdi mdi-dots-horizontal</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>mdi mdi-close-thick</value>
+  </data>
+  <data name="PageSizeChange" xml:space="preserve">
+    <value>mdi mdi-view-grid-plus</value>
+  </data>
+  <data name="Registration" xml:space="preserve">
+    <value>mdi mdi-content-save-plus</value>
+  </data>
+  <data name="Reject1" xml:space="preserve">
+    <value>mdi mdi-close-box-outline</value>
+  </data>
+  <data name="Reject2" xml:space="preserve">
+    <value>mdi mdi-close-box-multiple</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>mdi mdi-playlist-remove</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>mdi mdi-arrow-right-bold</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>mdi mdi-content-save</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>mdi mdi-magnify</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>mdi mdi-gesture-tap</value>
+  </data>
+  <data name="Setting" xml:space="preserve">
+    <value>mdi mdi-cog</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>mdi mdi-magnify</value>
+  </data>
+  <data name="ShowDetail" xml:space="preserve">
+    <value>mdi mdi-eye-outline</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>mdi mdi-check-circle-outline</value>
+  </data>
+  <data name="UnCheckAll" xml:space="preserve">
+    <value>mdi mdi-checkbox-multiple-blank-outline</value>
+  </data>
+  <data name="Understood" xml:space="preserve">
+    <value>mdi mdi-check-underline</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>mdi mdi-pencil</value>
+  </data>
+  <data name="VersionChanges" xml:space="preserve">
+    <value>mdi mdi-clock-edit-outline</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>mdi mdi-monitor-eye</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>mdi mdi-alert-outline</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>mdi mdi-check-bold</value>
+  </data>
+</root>

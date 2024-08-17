@@ -1,0 +1,68 @@
+﻿@page "/Personnels/Edit/{Id:guid}"
+
+@inject NavigationManager NavigationManager
+@inject Services.PersonnelsService PersonnelsService;
+
+@(Id)
+
+<FormEditor 
+	Model="Model"
+	OnValidSubmit="OnSubmitAsync"
+	Type="Infrastructure.Enums.EditFormType.Edit">
+</FormEditor>
+
+@code
+{
+	//protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
+	{
+		Model =
+			new ViewModels.Personnels.PersonnelViewModel();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		try
+		{
+			//Model = PersonnelsService.GetByIdAsync(Id).Result;
+			Model = await PersonnelsService.GetByIdAsync(Id);
+		}
+		catch (Exception ex)
+		{
+			string str = ex.Message;
+		}
+	}
+
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	public ViewModels.Personnels.PersonnelViewModel Model { get; set; }
+	private ViewModels.Personnels.PersonnelViewModel NewModel { get; set; }
+
+	//private void OnSubmit()
+	private async Task OnSubmitAsync()
+	{
+		// Save Data!
+		//Save();
+		await SaveAsync();
+
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Personnels.List>() }";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+	}
+
+	//private async void Save()
+	private async Task SaveAsync()
+	{
+		NewModel = new ViewModels.Personnels.PersonnelViewModel()
+			{
+				Id = Model.Id,
+				FirstName = Model.FirstName,
+				LastName = Model.LastName,
+			};
+
+		var varResult = await PersonnelsService.PutAsync(NewModel);
+
+	}
+
+}

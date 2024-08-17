@@ -1,0 +1,55 @@
+﻿@inject NavigationManager NavigationManager
+
+<EditForm Model="Model" OnValidSubmit="HandleValidSubmitAsync">
+	<ValidationSummary />
+	<FluentValidationValidator />
+	<DataAnnotationsValidator />
+
+	<div class="form-group">
+		<label for="firstname">@(Resources.DataDictionary.Title)</label>
+		<InputText id="firstname" class="form-control" @bind-Value="Model.Title" />
+		<div class="form-control-validation">
+			<ValidationMessage For="() => Model.Title" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary">
+			@if (Type == Infrastructure.Enums.EditFormType.Create)
+			{
+				@(Resources.Buttons.Create)
+			}
+			else
+			{
+				@(Resources.Buttons.Save)
+			}
+		</button>
+		<button type="reset" class="btn btn-secondary">@(Resources.Buttons.Reset)</button>
+
+		<button type="button" class="btn btn-danger" @onclick="ReturnToList">@(Resources.Buttons.Return)</button>
+	</div>
+</EditForm>
+
+@code
+{
+	[Parameter]
+	public ViewModels.Tasks.TaskViewModel Model { get; set; }
+
+	[Parameter]
+	public Infrastructure.Enums.EditFormType Type { get; set; }
+
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
+
+	private void HandleValidSubmitAsync()
+	{
+		var result = OnValidSubmit.InvokeAsync(null);
+	}
+
+	private void ReturnToList()
+    {
+		string uri = $"{ Infrastructure.Pages.Utility.setUri<Client.Pages.Tasks.List>() }";
+        NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+    }
+
+}

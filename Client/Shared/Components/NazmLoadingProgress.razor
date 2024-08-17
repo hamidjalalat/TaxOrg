@@ -1,0 +1,76 @@
+﻿@inject IJSRuntime JsRuntime
+
+@if (IsShow == true)
+{
+    <div class="form-progressing"
+         style="
+            height: @(Height);
+            width: @(Width);
+            top: @(Top);
+            left: @(Left);
+            right: @(Right);
+    ">
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 100px; height: 100%;">
+            <div class="text-center text-white">
+                <h4>
+                    @(Text)
+                </h4>
+                <div class="loading-spinner"></div>
+            </div>
+
+        </div>
+    </div>
+}
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public bool IsShow { get; set; } = false;
+
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public string Text { get; set; } = Resources.Messages.Common.LoadingProgressText;
+
+    private string Height { get; set; }
+    private string Width { get; set; }
+    private string Top { get; set; }
+    private string Right { get; set; }
+    private string Left { get; set; }
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Height = "100%";
+        Width = "100%";
+        Top = "0";
+        Right = "unset";
+        Left = "0";
+
+        string elementTag = (Id != null) ? $"#{Id}" : "body";
+
+        Dictionary<string, string> displayDimention = await JsRuntime.InvokeAsync<Dictionary<string, string>>("getElementDimension", elementTag);
+
+        Width = $"{displayDimention["width"]}px";
+        Height = $"{displayDimention["height"]}px";
+
+        if (Id != null)
+        {
+            Top = $"{displayDimention["top"]}px";
+            Left = $"{displayDimention["left"]}px";
+            //Right = $"{displayDimention["right"]}px";
+        }
+
+
+
+        //Console.WriteLine($"{elementTag} => width : {Width} - Height : {Height} - Top : {Top} - Right : {Right} - Left : {Left}");
+    }
+
+    #endregion
+}

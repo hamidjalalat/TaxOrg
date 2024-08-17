@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Configurations\Rich\Menus\**" />
+	  <Compile Remove="Configurations\Rich\Projects\**" />
+	  <EmbeddedResource Remove="Configurations\Rich\Menus\**" />
+	  <EmbeddedResource Remove="Configurations\Rich\Projects\**" />
+	  <None Remove="Configurations\Rich\Menus\**" />
+	  <None Remove="Configurations\Rich\Projects\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.31" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.31" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.31" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.31" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.31">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.31" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.31">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Oracle.EntityFrameworkCore" Version="6.21.140" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Application\Application.csproj" />
+		<ProjectReference Include="..\Dtat.Ddd.EntityFrameworkCore\Dtat.Ddd.EntityFrameworkCore.csproj" />
+		<ProjectReference Include="..\Nazm.Results\Nazm.Results.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Migrations\Oracle\" />
+	</ItemGroup>
+
+</Project>

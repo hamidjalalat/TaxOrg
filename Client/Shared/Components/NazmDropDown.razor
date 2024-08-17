@@ -1,0 +1,150 @@
+﻿@inject Infrastructure.Utility UtilityClass;
+@implements IDisposable;
+
+@typeparam TItem;
+@typeparam TResult;
+
+
+@if (IsMultiple)
+{
+    <RadzenDropDown id="@(UniqueId)" Name="@(UniqueId)" class="@(CSS)" Style="@(Style)" Disabled="@(IsDisabled)" ReadOnly="@(IsReadOnly)" Placeholder="@(Placeholder)"
+                    AllowClear="@(IsAllowClear)" AllowFiltering="@(IsAllowFiltering)" FilterOperator="StringFilterOperator.Contains"
+                    Data="@(DataItems)" @bind-Value="@(BindValue)" ValueProperty="@(ValueProperty)" TextProperty="@(TextProperty)"                    
+                    Change="@(OnValueChanged)"
+                    Multiple="true" Chips="@(IsChips)" SelectedItemsText="@(SelectedItemsText)">
+    </RadzenDropDown>
+}
+else
+{
+    <RadzenDropDown id="@(UniqueId)" Name="@(UniqueId)" class="@(CSS)" Style="@(Style)" Disabled="@(IsDisabled)" ReadOnly="@(IsReadOnly)" Placeholder="@(Placeholder)"
+                    AllowClear="@(IsAllowClear)" AllowFiltering="@(IsAllowFiltering)" FilterOperator="StringFilterOperator.Contains"
+                    Data="@(DataItems)" @bind-Value="@(BindValue)" ValueProperty="@(ValueProperty)" TextProperty="@(TextProperty)"                    
+                    Change="@(OnValueChanged)" >
+    </RadzenDropDown>
+}
+
+
+@code {
+    // ********************
+    #region Properties
+
+    private RadzenDropDown<TItem> refRadzenDropDown;
+
+    [Parameter]
+    public string UniqueId { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
+    [Parameter]
+    public bool IsAllowClear { get; set; }
+
+    [Parameter]
+    public bool IsAllowFiltering { get; set; }
+
+    [Parameter]
+    public bool IsMultiple { get; set; }
+
+    [Parameter]
+    public bool IsChips { get; set; }
+
+    [Parameter]
+    public string SelectedItemsText { get; set; }
+
+    [Parameter]
+    public string ValueProperty { get; set; }
+
+    [Parameter]
+    public string TextProperty { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
+
+    [Parameter]
+    public IEnumerable<TItem> DataItems { get; set; }
+
+    [Parameter]
+    public object BindValue { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChangedEventHandler { get; set; }
+
+    object selectedDatas { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (SelectedItemsText == null)
+            SelectedItemsText = Resources.Messages.Common.ItemsSelected;
+        if (Placeholder == null)
+            Placeholder = Resources.Messages.Validations.PleaseSelectOne;
+
+        selectedDatas = null;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task OnValueChanged(object args)
+    {
+        if (IsMultiple)
+        {
+            var type = typeof(TResult);
+
+            if (type == typeof(List<int>))
+            {
+                selectedDatas = new List<int>();
+                if (args != null)
+                    selectedDatas = (args as IEnumerable<int>).ToList();
+            }
+            if (type == typeof(List<long>))
+            {
+                selectedDatas = new List<long>();
+                if (args != null)
+                    selectedDatas = (args as IEnumerable<long>).ToList();
+            }
+            if (type == typeof(List<string>))
+            {
+                selectedDatas = new List<string>();
+                if (args != null)
+                    selectedDatas = (args as IEnumerable<string>).ToList();
+            }
+
+            await ValueChangedEventHandler.InvokeAsync(selectedDatas);
+            selectedDatas = null;
+        }
+        else
+        {
+            await ValueChangedEventHandler.InvokeAsync(args);
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        selectedDatas = null;
+    }
+
+    #endregion
+}

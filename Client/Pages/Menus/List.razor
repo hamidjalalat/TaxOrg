@@ -1,0 +1,383 @@
+﻿@page "/Menus/List/{refMenuId:int?}"
+
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager;
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.MenusService MenusService; 
+
+<div >
+
+	@if (IsFormLoading)
+	{
+		<NazmLoading IsShow="true" />
+	}
+	else
+	{
+		@if (IsFormProgressing)
+		{
+			<NazmLoadingProgress IsShow="true"/>
+		}
+
+		@if (refMenuId != null)
+		{
+			<div id="dgv-main-div" class="row">
+				<div class="col">
+					<RadzenDataGrid TItem="ViewModels.Menus.MenuViewModel" @ref="refToDataGrid" Data="@((dgvMain != null) ? dgvMain.Items: null)"
+						AllowColumnResize="true" AllowPaging="false" ShowPagingSummary="false" PagerPosition="PagerPosition.Bottom"
+						AllowSorting="true" Sort="OnSortGrid"
+						AllowFiltering="true" Filter="OnFilterAddGrid" FilterCleared="OnFilterClearedGrid" FilterDelay="@(Infrastructure.Utility.DataGridFilterDelay)"
+						FilterMode="FilterMode.Simple" LogicalFilterOperator="LogicalFilterOperator.And" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+						ApplyFilterText="@(Resources.Buttons.Apply)" ClearFilterText="@(Resources.Buttons.Clear)">
+
+						<EmptyTemplate>
+							<NazmDataGridEmptyTemplate />
+						</EmptyTemplate>
+
+						<HeaderTemplate>
+							<NazmDataGridHeaderTemplate IsGridExportExcelButton="true" GridExportExcelEventHandler="GridExportExcelAsync"/>
+						</HeaderTemplate>
+
+						<Columns>
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="MenuId" Title="@(Resources.DataDictionary.MenuId)" Width="70px" />
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="Title" Title="@(Resources.DataDictionary.MenuTitle)" />
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="Url" Title="@(Resources.DataDictionary.Url)" Visible="false"/>
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="IsVisibleTitle" Title="@(Resources.DataDictionary.IsVisibleTitle)" Width="70px" TextAlign="TextAlign.Center"/>
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="Sort" Title="@(Resources.DataDictionary.Sort)" Width="70px" />
+				@*			<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="ParentId" Title="@(Resources.DataDictionary.ParentId)" />
+				*@			<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="PageTitle" Title="@(Resources.DataDictionary.PageTitle)" />
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="PageDescription" Title="@(Resources.DataDictionary.PageDescription)" />
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="MenuIcon" Title="@(Resources.DataDictionary.MenuIcon)" Width="50px" Visible="false"/>
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Property="PageIcon" Title="@(Resources.DataDictionary.PageIcon)" Width="50px" Visible="false"/>
+							<RadzenDataGridColumn TItem="ViewModels.Menus.MenuViewModel" Title="@(Resources.DataDictionary.Action)" Width="60px" Sortable="false">
+								<Template Context="itemData">
+									<button type="button" class="btn btn-warning btn-sm" title="@(Resources.Buttons.Edit)" @onclick="() => Edit(itemData)">
+										<i class="@(Resources.ButtonsIcon.Edit) @(Resources.DefaultValues.IconSize18)"></i>
+									</button>
+								</Template>
+							</RadzenDataGridColumn>
+						</Columns>
+					</RadzenDataGrid>
+				</div>
+			</div>
+			@if (dgvMain != null && IsFormProgressing == false)
+			{
+				<NazmPagination TotalCount="@(dgvMain.TotalCount)" TotalPages="@(dgvMain.TotalPages)" PageNumber="@(dgvMain.PageNumber)" PageSize="@(dgvMain.PageSize)" EventPageNumberChanged="OnPageNumberChangedGrid" EventPageSizeChanged="OnPageSizeChangedGrid"  />
+			}
+		}
+		else
+		{
+			<NazmEmptyRecord />
+		}
+	}
+
+</div>
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+@code {
+
+	// ********************
+	#region Properties
+
+	[Parameter]
+	public int? refMenuId { get; set; }
+
+	public bool IsFormLoading { get; set; }
+	public bool IsFormProgressing { get; set; }
+
+	private List<ViewModels.SortItem> lstSortItems { get; set; }
+	private List<ViewModels.FilterItem> lstFilterItems { get; set; }
+	RadzenDataGrid<ViewModels.Menus.MenuViewModel> refToDataGrid;
+	public ViewModels.PagingViewModel<ViewModels.Menus.MenuViewModel> dgvMain { get; set; }
+
+	private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+	#endregion
+	// ********************
+	#region Events
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		lstNotifications = new List<Infrastructure.NotificationSettings>();
+		IsFormLoading = true;
+		// ********************
+
+		dgvMain = null;
+
+		lstFilterItems = new List<ViewModels.FilterItem>();
+		lstSortItems = new List<ViewModels.SortItem>();
+
+		await bindGrid();
+
+		// ********************
+		IsFormLoading = false;
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (lstFilterItems.Count > 0)
+		{
+			foreach (var filterItem in lstFilterItems)
+			{
+				var column = refToDataGrid.ColumnsCollection.Where(c => c.Property == filterItem.Field).FirstOrDefault();
+
+				if (column != null)
+				{
+					column.FilterValue = filterItem.Value;
+					//column.FilterOperator = filterItem.Operator as Radzen.FilterOperator;
+				}
+			}
+			await refToDataGrid.Reload();
+		}
+		if (lstSortItems.Count > 0)
+		{
+			foreach (var sortItem in lstSortItems)
+			{
+				var column = refToDataGrid.ColumnsCollection.Where(c => c.Property == sortItem.Field).FirstOrDefault();
+
+				if (column != null)
+				{
+					column.SortOrder = (sortItem.SortOrder == Infrastructure.Utility.SortAscending) ? SortOrder.Ascending : SortOrder.Descending;
+				}
+			}
+			await refToDataGrid.Reload();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	private void Edit(ViewModels.Menus.MenuViewModel viewModel)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Menus.Edit>()}/{refMenuId.Value}/{viewModel.MenuId}";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task GridExportExcelAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await bindGrid(pageSize: Infrastructure.Utility.PageSizeMax, fileExportType: Domain.Enums.FileExportTypeEnum.Office_Excel);
+
+		// ********************
+		IsFormProgressing = false;
+	} 
+
+	private async Task bindGrid(int? pageNumber = Infrastructure.Utility.PageNumber, int? pageSize = Infrastructure.Utility.PageSize, Domain.Enums.FileExportTypeEnum? fileExportType = null)
+	{
+		if (refMenuId != null)
+		{
+			ViewModels.FilterParams filterParams = new ViewModels.FilterParams();
+			if (lstFilterItems.Count > 0)
+			{
+				string strFilterJson = Newtonsoft.Json.JsonConvert.SerializeObject(lstFilterItems);
+
+				filterParams.FilterJson = strFilterJson;
+			}
+			if (lstSortItems.Count > 0)
+			{
+				string strSort = null;
+				foreach (var sortItem in lstSortItems)
+				{
+					strSort += $"{sortItem.Field} {sortItem.SortOrder}, ";
+				}
+
+				filterParams.SortBy = strSort.Trim().TrimEnd(',');
+			}
+
+
+			if (fileExportType == null)
+			{
+				ViewModels.Shared.PublicViewModel inputParamsViewModel = new ViewModels.Shared.PublicViewModel()
+				{
+					PageNumber = pageNumber.Value,
+					PageSize = pageSize.Value,
+					FilterParams = filterParams,
+					MenuId = refMenuId.Value,
+				};
+
+				var varGrid = await MenusService.FetchAsync(inputParamsViewModel);
+				if (varGrid != null)
+				{
+					if (varGrid.IsSuccess)
+						dgvMain = varGrid.Value;
+				}
+			}
+			else if (fileExportType == Domain.Enums.FileExportTypeEnum.Office_Excel)
+			{
+				var varGridColumns = await UtilityClass.getGridColumnListAsync(refToDataGrid.ColumnsCollection);
+
+				ViewModels.Shared.PublicViewModel inputParamsViewModel = new()
+				{
+					PageSize = pageSize.Value,
+					FilterParams = filterParams,
+					MenuId = refMenuId.Value,
+					FileExportType = Domain.Enums.FileExportTypeEnum.Office_Excel,
+						FileExportColumns = varGridColumns,
+				};
+
+				string fileExportName = $"{Resources.DataDictionary.Menu}.xlsx";
+				var varExportExcelData = await MenusService.FetchAllAndFileDownloadAsync(inputParamsViewModel);
+				if (varExportExcelData != null)
+				{
+					if (varExportExcelData.IsSuccess)
+					{
+						await UtilityClass.FileDownloadAsDataStreamFromAPIAsync(JsRuntime, fileExportName, varExportExcelData.Value);
+
+						if (varExportExcelData.Successes.Count() > 0)
+							lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+								(varExportExcelData.Successes, Infrastructure.Enums.MessageType.Success));
+					}
+					if (varExportExcelData.IsFailed)
+					{
+						if (varExportExcelData.Errors.Count() > 0)
+							lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+								(varExportExcelData.Errors, Infrastructure.Enums.MessageType.Error));
+					}
+				}
+			}
+		}
+
+	}
+
+	private async Task OnSortGrid(DataGridColumnSortEventArgs<ViewModels.Menus.MenuViewModel> args)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		ViewModels.SortItem sortColumn = new ViewModels.SortItem()
+			{
+				Field = args.Column.Property,
+				SortOrder = (args.SortOrder == SortOrder.Ascending) ? Infrastructure.Utility.SortAscending : Infrastructure.Utility.SortDescending,
+			};
+
+		if (lstSortItems.Exists(c => c.Field == args.Column.Property))
+		{
+			await sortItemsRemove(args.Column.Property);
+		}
+		if ((args.SortOrder == SortOrder.Ascending) || (args.SortOrder == SortOrder.Descending))
+		{
+			if (lstSortItems.Count > 0)
+				lstSortItems.Clear();
+
+			lstSortItems.Add(sortColumn);
+		}
+
+		await bindGrid();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task OnFilterAddGrid(DataGridColumnFilterEventArgs<ViewModels.Menus.MenuViewModel> args)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		ViewModels.FilterItem filterColumn = new ViewModels.FilterItem()
+			{
+				Field = args.Column.Property,
+				Operator = args.Column.FilterOperator.ToString(),//.Replace("Equals", "eq"),
+				Value = args.Column.GetFilterValue(),
+			};
+
+		if (lstFilterItems.Exists(c => c.Field == args.Column.Property))
+		{
+			await filterItemsRemove(args.Column.Property);
+		}
+		lstFilterItems.Add(filterColumn);
+
+		await bindGrid();
+
+		StateHasChanged();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task OnFilterClearedGrid(DataGridColumnFilterEventArgs<ViewModels.Menus.MenuViewModel> args)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		if (lstFilterItems.Exists(c => c.Field == args.Column.Property))
+		{
+			await filterItemsRemove(args.Column.Property);
+		}
+
+		await bindGrid();
+
+		StateHasChanged();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task sortItemsRemove(string strField)
+	{
+		await Task.Run(() =>
+			{
+				int index = 0;
+				if (lstSortItems.Count > 0)
+				{
+					foreach (var sortItem in lstSortItems)
+					{
+						if (sortItem.Field == strField)
+							break;
+						index++;
+					}
+
+					lstSortItems.RemoveAt(index);
+				}
+			});
+	}
+
+	private async Task filterItemsRemove(string strField)
+	{
+		await Task.Run(() =>
+			{
+				int index = 0;
+				if (lstFilterItems.Count > 0)
+				{
+					foreach (var filterItem in lstFilterItems)
+					{
+						if (filterItem.Field == strField)
+							break;
+						index++;
+					}
+
+					lstFilterItems.RemoveAt(index);
+				}
+			});
+	}
+
+	private async Task OnPageNumberChangedGrid(int pageNum)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await bindGrid(pageNumber: pageNum, pageSize: dgvMain?.PageSize);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task OnPageSizeChangedGrid(int pageSize)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await bindGrid(pageSize: pageSize);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	#endregion
+}

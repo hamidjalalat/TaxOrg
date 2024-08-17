@@ -1,0 +1,136 @@
+﻿@page "/"
+@page "/Login"
+
+@layout LoginLayout
+
+@inject NavigationManager NavigationManager;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.UserAuthenticationsService UserAuthenticationsService;
+
+@if (IsFormLoading)
+{
+    <NazmLoading IsShow="true" />
+}
+else
+{
+	@if (IsFormProgressing)
+	{
+		<NazmLoadingProgress IsShow="true" />
+	}
+
+	<LoginFormEditor Model="Model"
+		OnValidSubmit="OnSubmitAsync"
+		Errors="@(Error)">
+	</LoginFormEditor>
+
+
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+@code {
+
+	// ********************
+	#region Properties
+
+	public bool IsFormLoading { get; set; }
+	public bool IsFormProgressing { get; set; }
+
+	private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+	//public Infrastructure.MockData.UserClass Model { get; set; }
+	public ViewModels.Users.UserAuthenticationLoginViewModel Model { get; set; }
+
+	private string Error { get; set; }
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	protected override async Task OnInitializedAsync()
+	{
+		IsFormLoading = true;
+		// ********************
+
+		await base.OnInitializedAsync();
+
+		lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+		//Model = new Infrastructure.MockData.UserClass();
+		Model = new ViewModels.Users.UserAuthenticationLoginViewModel();
+
+		// ********************
+		IsFormLoading = false;
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync(); 
+
+		IsFormLoading = true;
+		// ********************
+
+		// ********************
+		IsFormLoading = false;
+	}
+
+	private async Task OnSubmitAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		lstNotifications.Clear();
+		
+		/* MockData User
+		//Infrastructure.MockData.UserClass varResult =
+		//	await UserMockService.GetInstance().findByUserNamePasswordAsync(Model.UserName, Model.Password);
+		*/
+
+		var varResult = await UserAuthenticationsService.LoginAsync(Model);
+
+		if (varResult != null)
+		{
+			/* MockData User
+			await myStorage.SetItemAsync(Infrastructure.Utility.Key_UserName, Model.UserName);
+
+			string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Index>()}";
+			NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+			*/
+
+			if (varResult.IsSuccess)
+			{
+				lstNotifications.Clear();
+				if (varResult.Successes.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Successes, Infrastructure.Enums.MessageType.Success));
+
+				string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Index>()}/{Resources.DefaultValues.MenuIdIndex}";
+				NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+			}
+			if (varResult.IsFailed)
+			{
+				if (varResult.Errors.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Errors, Infrastructure.Enums.MessageType.Error));
+			}
+		}
+		else
+		{
+			//Error = Resources.Messages.Errors.InvalidLogin;
+
+			var error = new System.Collections.Generic.List<string>();
+			error.Add(Resources.Messages.Errors.InvalidLogin);
+			lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(error, Infrastructure.Enums.MessageType.Error));
+		}
+		
+		// ********************
+		IsFormProgressing = false;		
+	}
+	
+	#endregion
+
+}

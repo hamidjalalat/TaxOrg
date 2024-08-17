@@ -1,0 +1,169 @@
+﻿@using Infrastructure.Enums
+@using Resources.Messages
+
+
+<div class="modal fade" id="@(UniqueId)" name="@(UniqueId)" tabindex="-1" aria-hidden="true"
+	data-bs-backdrop="@(backdrop)" data-bs-keyboard="@(keyboard)" aria-labelledby="@($"{UniqueId}Label")">
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable @(SelectedSizeType)">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="d-flex">
+					<i class=@($"{SelectedIconType} {IconColor} {Resources.DefaultValues.IconSize36}")></i>
+					<h3 class="modal-title mx-1 @(IconColor)" id="@($"{UniqueId}Label")">
+						@(Title)
+					</h3>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				@(Body)
+			</div>
+			@if (StateType != null)
+			{
+				<div class="modal-footer">
+					@switch (StateType)
+					{
+						case Infrastructure.Enums.ModalClass.ModalStateType.Confirm:
+							<button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.No)" data-bs-dismiss="modal" @onclick="() => InvokHandlerAsync(false)">
+								<i class="@(Resources.ButtonsIcon.No) @(Resources.DefaultValues.IconSize24)"></i>
+							</button>
+
+							<button type="button" class="btn btn-success btn-sm" title="@(Resources.Buttons.Yes)" data-bs-dismiss="modal" @onclick="() => InvokHandlerAsync(true)">
+								<i class="@(Resources.ButtonsIcon.Yes) @(Resources.DefaultValues.IconSize24)"></i>
+							</button>
+							break;
+						case Infrastructure.Enums.ModalClass.ModalStateType.Understood:
+							<button type="button" class="btn btn-success btn-sm" title="@(Resources.Buttons.Understood)" data-bs-dismiss="modal" @onclick="() => InvokHandlerAsync(true)">
+								<i class="@(Resources.ButtonsIcon.Understood) @(Resources.DefaultValues.IconSize24)"></i>
+							</button>
+							break;
+						case Infrastructure.Enums.ModalClass.ModalStateType.Close:
+							<button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Close)" data-bs-dismiss="modal" @onclick="() => InvokHandlerAsync(true)">
+								<i class="@(Resources.ButtonsIcon.Close) @(Resources.DefaultValues.IconSize24)"></i>
+							</button>
+							break;
+						default:
+							break;
+					}
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+
+
+@code {
+
+	// ********************
+	#region Properties
+
+	[Parameter]
+	public string UniqueId { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
+	public RenderFragment Body { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> EventCallbackHandler { get; set; }
+
+	[Parameter]
+	public Infrastructure.Enums.ModalClass.ModalIconType IconType { get; set; }
+	private string IconColor { get; set; }
+	private string SelectedIconType { get; set; }
+
+	[Parameter]
+	public Infrastructure.Enums.ModalClass.ModalStateType? StateType { get; set; }
+
+	[Parameter]
+	public Infrastructure.Enums.ModalClass.ModalSizeType SizeType { get; set; }
+	private string SelectedSizeType { get; set; }
+
+	[Parameter]
+	public bool RequiredClose { get; set; }
+	private string backdrop { get; set; }
+	private string keyboard { get; set; }
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		if (RequiredClose)
+		{
+			backdrop = "static";
+			keyboard = "false";
+		}
+		else
+		{
+			backdrop = "true";
+			keyboard = "true";
+		}
+
+		await SetSizeAsync();
+		await SetIconAsync();
+	}
+
+	private async Task SetIconAsync()
+	{
+		switch (IconType)
+		{
+			case Infrastructure.Enums.ModalClass.ModalIconType.Success:
+				SelectedIconType = $"{Resources.ButtonsIcon.Success}";
+				IconColor = "text-success";
+				break;
+			case Infrastructure.Enums.ModalClass.ModalIconType.Info:
+				SelectedIconType = $"{Resources.ButtonsIcon.Info}";
+				IconColor = "text-info";
+				break;
+			case Infrastructure.Enums.ModalClass.ModalIconType.Warning:
+				SelectedIconType = $"{Resources.ButtonsIcon.Warning}";
+				IconColor = "text-warning";
+				break;
+			case Infrastructure.Enums.ModalClass.ModalIconType.Error:
+				SelectedIconType = $"{Resources.ButtonsIcon.Error}";
+				IconColor = "text-danger";
+				break;
+			default:
+				break;
+		}
+
+		await Task.CompletedTask;
+	}
+
+	private async Task SetSizeAsync()
+	{
+		switch (SizeType)
+		{
+			case Infrastructure.Enums.ModalClass.ModalSizeType.sm:
+				SelectedSizeType = "modal-sm";
+				break;
+			case Infrastructure.Enums.ModalClass.ModalSizeType.lg:
+				SelectedSizeType = "modal-lg";
+				break;
+			case Infrastructure.Enums.ModalClass.ModalSizeType.xl:
+				SelectedSizeType = "modal-xl";
+				break;
+			default:
+				SelectedSizeType = string.Empty;
+				break;
+		}
+
+		await Task.CompletedTask;
+	}
+
+	private async Task InvokHandlerAsync(bool value)
+	{
+		if (value)
+			await EventCallbackHandler.InvokeAsync(value);
+	}
+
+	#endregion
+}

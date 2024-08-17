@@ -1,0 +1,240 @@
+﻿@page "/Users/Profile/{refMenuId:int?}"
+
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.Tokens.ITokensService TokensService;
+@inject Services.UserManagesService UserManagesService;
+
+@if (IsFormLoading)
+{
+    <NazmLoading IsShow="true" />
+}
+else
+{
+
+    @if (IsFormProgressing)
+    {
+        <NazmLoadingProgress IsShow="true" />
+    }
+
+    @if (refMenuId != null)
+    {
+        <div id="dgv-main-div" class="row">
+            <div class="col">
+
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item active" role="presentation">
+                        <button class="nav-link" id="PersonalInformation-tab" data-bs-toggle="tab" data-bs-target="#PersonalInformation" type="button" role="tab" aria-controls="PersonalInformation" aria-selected="false">@(Resources.DataDictionary.PersonalInformation)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link disabled" tabindex="-1" aria-disabled="true" id="UserAccountInformation-tab" data-bs-toggle="tab" data-bs-target="#UserAccountInformation" type="button" role="tab" aria-controls="UserAccountInformation" aria-selected="false">@(Resources.DataDictionary.UserAccountInformation)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link " tabindex="-1" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">@(Resources.DataDictionary.PasswordChange)</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane fade show active" id="PersonalInformation" role="tabpanel" aria-labelledby="PersonalInformation-tab">
+                        <div class="row  mr-5 d-flex justify-content-between">
+                            <div class="col-md-4">
+                                <ul class="h6">
+                                    <li class="mb-3 mt-4">@(Resources.DataDictionary.Name) : @(Model.FirstName)</li>
+                                    <li class="mb-3">@(Resources.DataDictionary.LastName) : @(Model.LastName)</li>
+                                    <li class="mb-3">@(Resources.DataDictionary.Gender) : @(Model.GenderTitle3)</li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-4 d-none">
+                                <img src="@(strAvatar)" alt="Profile Avatar" class="mw-100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="UserAccountInformation" role="tabpanel" aria-labelledby="UserAccountInformation-tab">
+                        <div class="row  mr-5">
+                            <div class="col-md-4">
+                                <ul class="h6">
+                                    <li class="mb-3 mt-4">@(Resources.DataDictionary.UserName) : @(Model.UserName)</li>
+                                    <li class="mb-3">@(Resources.DataDictionary.OrganizationalUnit) : @(Model.OrganizationalUnit)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                        <div class="row">
+                            <div class="col-md-6 mr-5 pr-5">
+                                <EditForm Model="ChangePasswordModel" OnValidSubmit="OnSubmitAsync">
+                                    <FluentValidationValidator />
+                                    <DataAnnotationsValidator />
+
+                                    <div class="mb-3 mt-4">
+                                        <label for="oldPassword" class="form-label">@(Resources.DataDictionary.OldPassword) :</label>
+                                        <input type="password" id="oldPassword" class="form-control ltr-style" @bind-value="ChangePasswordModel.CurrentPassword" />
+                                        <div class="form-control-validation">
+                                            <ValidationMessage For="() => ChangePasswordModel.CurrentPassword" />
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">@(Resources.DataDictionary.NewPassword) :</label>
+                                        <input type="password" id="newPassword" class="form-control ltr-style" @bind-value="ChangePasswordModel.NewPassword" />
+                                        <div class="form-control-validation">
+                                            <ValidationMessage For="() => ChangePasswordModel.NewPassword" />
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">@(Resources.DataDictionary.ConfirmNewPassword) :</label>
+                                        <input type="password" id="confirmPassword" class="form-control ltr-style" @bind-value="ChangePasswordModel.NewConfirmPassword" />
+                                        <div class="form-control-validation">
+                                            <ValidationMessage For="() => ChangePasswordModel.NewConfirmPassword" />
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 float-start">
+
+                                        <button type="submit" class="btn btn-primary btn-sm" title="@(Resources.Buttons.Save)">
+                                            <i class="@(Resources.ButtonsIcon.Save) @(Resources.DefaultValues.IconSize24)"></i>
+                                        </button>
+                                    </div>
+
+                                </EditForm>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+
+
+@code {
+
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    public bool IsFormLoading { get; set; }
+    public bool IsFormProgressing { get; set; }
+
+    private ViewModels.Users.UserManageViewModel user { get; set; }
+    private string strAvatar { get; set; }
+
+    public ViewModels.Users.UserManageViewModel Model { get; set; }
+    private ViewModels.Users.UserManageChangePasswordViewModel ChangePasswordModel { get; set; }
+    private ViewModels.Users.UserManageChangePasswordViewModel NewModel { get; set; }
+
+    private string oldPassword { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    private List<string> Errors { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsFormLoading = true;
+        // ********************
+
+        await base.OnInitializedAsync();
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+        ChangePasswordModel = new ViewModels.Users.UserManageChangePasswordViewModel();
+
+        System.Guid? userId = await UtilityClass.getUserIdFromTokenAsync(TokensService);
+        await bindModel(userId);
+
+        if (Model != null)
+        {
+            strAvatar = await UtilityClass.getAvatarAsync($"{Model.Gender}");
+        }
+
+        // ********************
+        IsFormLoading = false;
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        IsFormProgressing = true;
+        // ********************
+
+        bool flagResult = await SaveAsync();
+
+        if (flagResult)
+        {
+            //Model.ToUserId = null;
+            //Model.Descript = null;
+
+            //await bindModel();
+        }
+
+        // ********************
+        IsFormProgressing = false;
+    }
+
+    private async Task<bool> SaveAsync()
+    {
+        //await Task.Delay(100);
+
+        NewModel = new ViewModels.Users.UserManageChangePasswordViewModel()
+        {
+            CurrentPassword = ChangePasswordModel.CurrentPassword,
+            NewPassword = ChangePasswordModel.NewPassword,
+            NewConfirmPassword = ChangePasswordModel.NewConfirmPassword,
+
+        };
+
+        var varResult = await UserManagesService.ChangePasswordAsync(NewModel);
+        bool flagReturn = false;
+        if (varResult != null)
+        {
+            lstNotifications.Clear();
+            flagReturn = varResult.IsSuccess;
+            if (varResult.IsSuccess)
+            {
+                if (varResult.Successes.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Successes, Infrastructure.Enums.MessageType.Success));
+            }
+            if (varResult.IsFailed)
+            {
+                if (varResult.Errors.Count() > 0)
+                    lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+                        (varResult.Errors, Infrastructure.Enums.MessageType.Error));
+            }
+        }
+
+        return flagReturn;
+    }
+
+    private async Task bindModel(Guid? userId)
+    {
+        var varModel = await UserManagesService.FindByIdAsync(userId.Value);
+        if (varModel != null)
+        {
+            Model = varModel;
+        }
+
+    }
+
+    #endregion
+}

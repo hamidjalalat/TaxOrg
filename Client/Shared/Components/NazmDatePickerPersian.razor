@@ -1,0 +1,154 @@
+﻿@using System.Globalization;
+@using System.Reflection
+
+@if (IsShowButtons)
+{
+    <MudDatePicker @ref="refDatePicker" Date="@(DateInput)" Label="@(DateLabel)" @bind-Text="@(DateInputText)"
+        Culture="@GetPersianCulture()" TitleDateFormat="dddd, dd MMMM"
+        Clearable="true"
+        DisableToolbar="@(!IsShowHeader)"
+        Disabled="@(IsDisabled)"
+        ReadOnly="@(IsReadOnly)"
+        MaxDate="@((DateMax != null) ? DateMax.Value : null)"
+        MinDate="@((DateMin != null) ? DateMin.Value : null)"
+        Color="MudBlazor.Color.Info"
+        Style="@(DatePickerStyle)"
+        NextIcon="@(Resources.ButtonsIcon.IconNext)"
+        PreviousIcon="@(Resources.ButtonsIcon.IconBefore)"
+        DateChanged="@(HandleEventDateChanged)">
+        <PickerActions>
+            @* <button type="button" class="btn btn-secondary btn-sm" @onclick="() => GoToDate(DateTime.Today)">امروز</button> *@
+            <button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Close)" @onclick="() => refDatePicker.Close(false)">
+                <i class="@(Resources.ButtonsIcon.No) @(Resources.DefaultValues.IconSize18)"></i>
+            </button>
+            <button type="button" class="btn btn-success btn-sm" title="@(Resources.Buttons.Select)" @onclick="() => refDatePicker.Close()">
+                <i class="@(Resources.ButtonsIcon.Yes) @(Resources.DefaultValues.IconSize18)"></i>
+            </button>
+        </PickerActions>
+    </MudDatePicker>
+}
+else
+{
+    <MudDatePicker Date="@(DateInput)" Label="@(DateLabel)" @bind-Text="@(DateInputText)"
+        Culture="@GetPersianCulture()" TitleDateFormat="dddd, dd MMMM"
+        Clearable="true"
+        DisableToolbar="@(!IsShowHeader)"
+        Disabled="@(IsDisabled)"
+        ReadOnly="@(IsReadOnly)"
+        MaxDate="@((DateMax != null) ? DateMax.Value : null)"
+        MinDate="@((DateMin != null) ? DateMin.Value : null)"
+        Color="MudBlazor.Color.Info"
+        Style="@(DatePickerStyle)"
+        NextIcon="@(Resources.ButtonsIcon.IconNext)"
+        PreviousIcon="@(Resources.ButtonsIcon.IconBefore)"
+        DateChanged="@(HandleEventDateChanged)">
+    </MudDatePicker>
+}
+
+
+@code {
+
+    [Parameter, EditorRequired]
+    public DateTime? DateInput { get; set; } //= Nazm.DateConversionClass.DateTimeNow; //DateTime.Now;
+    private string DateInputText { get; set; }
+
+    [Parameter]
+    public DateTime? DateMax { get; set; }
+
+    [Parameter]
+    public DateTime? DateMin { get; set; }
+
+    [Parameter]
+    public string DateLabel { get; set; }
+
+    [Parameter]
+    public bool IsShowHeader { get; set; }
+
+    [Parameter]
+    public bool IsShowButtons { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback<DateTime?> EventDateChanged { get; set; }
+
+    private MudDatePicker refDatePicker;
+
+    private string DatePickerStyle = "background-color: white; padding: 4px 10px; border: 1px solid #ebedf2; border-radius: 5px;";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        IsShowHeader = true;
+
+        if(DateInput != null)
+        {
+            DateInputText = Nazm.DateConversionClass.GetInstance().GetPersianDate(DateInput.Value);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();        
+    }
+
+    private async Task HandleEventDateChanged(DateTime? dateTime)
+    {       
+        DateInput = dateTime;
+        //Console.WriteLine($"ins: {dateTime}");
+        await EventDateChanged.InvokeAsync(dateTime);
+    }
+
+    private async Task GoToDate(DateTime dateTime)
+    {
+        await refDatePicker.GoToDate(dateTime);
+    }
+
+    public CultureInfo GetPersianCulture()
+    {
+        var culture = new CultureInfo("fa-IR");
+        DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
+
+        formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
+        formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
+        var monthNames = new[]
+        {
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند",
+            "",
+        };
+        var MonthNamesPlusNumber = new[]
+        {
+            "1. فروردین", "2. اردیبهشت", "3. خرداد", "4. تیر", "5. مرداد", "6. شهریور",
+            "7. مهر", "8. آبان", "9. آذر", "10. دی", "11. بهمن", "12. اسفند",
+            "",
+        };
+
+        formatInfo.MonthNames = formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
+        formatInfo.AbbreviatedMonthNames = MonthNamesPlusNumber;
+
+        formatInfo.AMDesignator = "ق.ظ";
+        formatInfo.PMDesignator = "ب.ظ";
+        formatInfo.ShortDatePattern = "yyyy/MM/dd";
+        formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
+        formatInfo.YearMonthPattern = "MMMM yyyy";
+        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
+
+        System.Globalization.Calendar cal = new PersianCalendar();
+        FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (fieldInfo != null)
+            fieldInfo.SetValue(culture, cal);
+        FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (info != null)
+            info.SetValue(formatInfo, cal);
+        culture.NumberFormat.NumberDecimalSeparator = "/";
+        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
+        culture.NumberFormat.NumberNegativePattern = 0;
+        return culture;        
+    }
+}

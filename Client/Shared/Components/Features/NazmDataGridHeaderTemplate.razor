@@ -1,0 +1,101 @@
+﻿<div class="d-flex">
+    <div class="p-1 flex-grow-1 d-flex justify-content-start">
+        @if (IsReturnButton)
+        {
+            <button type="button" class="btn btn-danger btn-sm mb-2 mx-1" title="@(Resources.Buttons.Return)" @onclick="ReturnAsync">
+                <i class="@(Resources.ButtonsIcon.Return) @(Resources.DefaultValues.IconSize24)"></i>
+            </button>
+        }
+        @if (IsCreateButton)
+        {
+            <button type="button" class="btn btn-primary btn-sm mb-2" title="@(Resources.Buttons.Create)" @onclick="CreateAsync">
+                <i class="@(Resources.ButtonsIcon.Create) @(Resources.DefaultValues.IconSize24)"></i>
+            </button>
+        }
+        @if (IsCreateModalButton)
+        {
+            <button type="button" class="btn btn-primary btn-sm mb-2" title="@(Resources.Buttons.Create)" data-bs-toggle="modal" data-bs-target="@($"#{CreateModalIdButton}")" @onclick="CreateModalAsync">
+                <i class="@(Resources.ButtonsIcon.Create) @(Resources.DefaultValues.IconSize24)"></i>
+            </button>
+        }
+        @if (ExtraHtml != null)
+        {
+            @(ExtraHtml)
+        }
+    </div>
+    <div class="p-1">
+        @if (IsGridExportExcelButton)
+        {
+            <button type="button" class="btn btn-success btn-sm mb-2" title="@(Resources.Buttons.ExportExcel)" @onclick="GridExportExcelAsync">
+                <i class="@(Resources.ButtonsIcon.ExportExcel) @(Resources.DefaultValues.IconSize24)"></i>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public bool IsReturnButton { get; set; }
+    [Parameter]
+    public EventCallback ReturnEventHandler { get; set; }
+
+    // --------------------
+    [Parameter]
+    public bool IsCreateButton { get; set; }
+    [Parameter]
+    public EventCallback CreateEventHandler { get; set; }
+
+    //--------------------
+    [Parameter]
+    public bool IsCreateModalButton { get; set; }
+    [Parameter]
+    public string CreateModalIdButton { get; set; }
+    [Parameter]
+    public EventCallback CreateModalEventHandler { get; set; }
+
+    //--------------------
+    [Parameter]
+    public bool IsGridExportExcelButton { get; set; }
+    [Parameter]
+    public EventCallback GridExportExcelEventHandler { get; set; }
+
+    [Parameter]
+    public RenderFragment? ExtraHtml { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task ReturnAsync()
+    {
+        await ReturnEventHandler.InvokeAsync();
+    }
+
+    private async Task CreateAsync()
+    {
+        await CreateEventHandler.InvokeAsync();
+    }
+
+    private async Task CreateModalAsync()
+    {
+        await CreateModalEventHandler.InvokeAsync();
+    }
+
+    private async Task GridExportExcelAsync()
+    {
+        await GridExportExcelEventHandler.InvokeAsync();
+    }
+
+    #endregion
+
+}

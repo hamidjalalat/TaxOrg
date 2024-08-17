@@ -1,0 +1,143 @@
+﻿@page "/Personnels/ComponentsMudblazor"
+
+@using System.Net.Http.Json
+@using MudBlazor
+
+@inject Services.PersonnelsService PersonnelsService
+@inject HttpClient Http
+
+<h3>Components Mudblazor</h3>
+
+@*<hr />
+<h4>DataGrid</h4>
+@if (lstMain != null)
+{
+	<MudDataGrid T="ViewModels.Personnels.PersonnelViewModel" MultiSelection="true" Items="@(lstMain)" SortMode="SortMode.Single"
+				 Filterable="true" Hideable="true" Style="width: 98%;">
+		<Columns>
+			<Column T="ViewModels.Personnels.PersonnelViewModel" Field="Id" Title="Id" Sortable="false" Filterable="false" />
+			<Column T="ViewModels.Personnels.PersonnelViewModel" Field="FirstName" />
+			<Column T="ViewModels.Personnels.PersonnelViewModel" Field="LastName" />
+		</Columns>
+		<PagerContent>
+			<MudDataGridPager T="ViewModels.Personnels.PersonnelViewModel" />
+		</PagerContent>
+	</MudDataGrid>
+} 
+else
+{
+	<p>Loading...Fetching Data...</p>
+}
+
+<hr />
+<h4>Table Virtualize</h4>
+<MudTable Items="lstMain" Height="350px" Breakpoint="Breakpoint.Sm" Virtualize="true" FixedHeader="true" Style="width: 90%;">
+	<HeaderContent>
+		<MudTh>Id</MudTh>
+		<MudTh>FirstName</MudTh>
+		<MudTh>LastName</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="Id">@context.Id</MudTd>
+		<MudTd DataLabel="FirstName">@context.FirstName</MudTd>
+		<MudTd DataLabel="LastName">@context.LastName</MudTd>
+	</RowTemplate>
+</MudTable>*@
+
+<hr />
+<label>@(PersonnelSelected != null ? $"{ PersonnelSelected.FirstName } { PersonnelSelected.LastName }" : string.Empty)</label>
+<h4>DropDown</h4>
+<MudSelect T="ViewModels.Personnels.PersonnelViewModel" @bind-Value="PersonnelSelected" @bind-SelectedValues="options"
+		   Label="Personnel" HelperText="Personnel" Variant="Variant.Outlined" Clearable="true"
+		   AdornmentIcon="@Icons.Material.Filled.Search">
+
+	@if (MyDropDown != null)
+	{
+		foreach (var selectItem in MyDropDown)
+		{
+			<MudSelectItem Value="@selectItem"> @($"{ selectItem.FirstName } { selectItem.LastName }") </MudSelectItem>
+		}
+	}
+</MudSelect>
+
+
+@*<hr />
+<h4 class="mb-4">DropDown Virtualization</h4>
+<div style="height:100px;overflow-y:hidden;">
+	<MudSelect T="ViewModels.Personnels.PersonnelViewModel" @bind-SelectedValues="MyDropDownVirtual" @bind-Value="PersonnelSelected"
+			   Label="Personnel" HelperText="Personnel Multi Selection" Variant="Variant.Outlined" Clearable="true"
+			   AdornmentIcon="@Icons.Material.Filled.Search" MultiSelection="true" SelectAll="false"
+			   >
+
+		@if (MyDropDownVirtualTemp != null)
+		{
+			<Virtualize TItem="ViewModels.Personnels.PersonnelViewModel" Items="@MyDropDownVirtualTemp" Context="item" >
+				<MudSelectItem T="ViewModels.Personnels.PersonnelViewModel" Value="@item"> @($"{ item.FirstName } {item.LastName}") </MudSelectItem>
+			</Virtualize>
+		}
+	</MudSelect>
+</div>*@
+
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		// کند بودن خواندن اطلاعات در سمت کلاینت
+		// JsonAsync
+		// بررسی نحوه خواندن رکوردهای زیاد در کامپوننت های آماده
+
+		var varGrid = await PersonnelsService.GetQueryAsync();
+		//var varGrid =
+		//await Http.GetFromJsonAsync
+		//<Nazm.Results.Result<System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel>>>
+		////<Nazm.Results.Result<ViewModels.Personnels.PersonnelViewModel []>>
+		//("https://localhost:44335/Personnels/getallQuery");
+
+
+		var varDropDown = await PersonnelsService.GetAsync();
+
+		var varDropDownVirtual = varGrid;
+
+		if (varGrid != null)
+		{
+			//strMessage = varGrid.ToString();
+			//if (varGrid.IsSuccess)
+			//	lstMain = varGrid.Value;
+			if (varDropDown.IsSuccess)
+			{
+				MyDropDown = varDropDown.Value;
+			}
+			//if (varDropDownVirtual.IsSuccess)
+			//{
+			//	MyDropDownVirtual = varDropDownVirtual.Value;
+			//	MyDropDownVirtualTemp = varDropDownVirtual.Value;
+			//}
+		}
+		else
+		{
+			strMessage = "Nothing.........";
+		}
+	}
+
+	//public System.Collections.Generic.IList<ViewModels.Personnels.PersonnelViewModel> lstMain { get; set; }
+
+	public System.Collections.Generic.IEnumerable<ViewModels.Personnels.PersonnelViewModel> MyDropDown { get; set; }
+	private System.Collections.Generic.IEnumerable<ViewModels.Personnels.PersonnelViewModel> options { get; set; } = new HashSet<ViewModels.Personnels.PersonnelViewModel>();
+
+	//public System.Collections.Generic.IEnumerable<ViewModels.Personnels.PersonnelViewModel> MyDropDownVirtual { get; set; } = new HashSet<ViewModels.Personnels.PersonnelViewModel>();
+	//public System.Collections.Generic.ICollection<ViewModels.Personnels.PersonnelViewModel> MyDropDownVirtualTemp { get; set; }
+
+	public string strMessage = "Nothing";
+
+	//------------------------------------------------------------------
+	public ViewModels.Personnels.PersonnelViewModel PersonnelSelected { get; set; } = null;
+
+	private void OnChanged(ViewModels.Personnels.PersonnelViewModel viewModel)
+	{
+		string strSelect = $"value changed to { viewModel.FirstName } { viewModel.LastName }";
+		Console.WriteLine(strSelect);
+	}
+
+
+}

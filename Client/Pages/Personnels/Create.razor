@@ -1,0 +1,58 @@
+﻿@page "/Personnels/Create"
+
+@inject NavigationManager NavigationManager;
+@inject Services.PersonnelsService PersonnelsService;
+
+<FormEditor 
+	Model="Model"
+	OnValidSubmit="OnSubmitAsync"
+	Type="Infrastructure.Enums.EditFormType.Create">
+</FormEditor>
+
+@code
+{
+	//protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
+	{
+		Model =
+			new ViewModels.Personnels.PersonnelViewModel();
+	}
+
+	public ViewModels.Personnels.PersonnelViewModel Model { get; set; }
+	private ViewModels.Personnels.CreateRequestViewModel NewModel { get; set; }
+
+	//private void OnSubmit()
+	private async Task OnSubmitAsync()
+	{
+		// Save Data!
+		//Save();
+		bool flagResult = await SaveAsync();
+
+		if (flagResult)
+		{
+			string uri = $"{Infrastructure.Pages.Utility.setUri<Client.Pages.Personnels.List>()}";
+			NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		}
+	}
+
+	//private async void Save()
+	private async Task<bool> SaveAsync()
+	{
+		NewModel = new ViewModels.Personnels.CreateRequestViewModel()
+			{
+				FirstName = Model.FirstName,
+				LastName = Model.LastName,
+			};
+
+		var varResult = await PersonnelsService.PostAsync(NewModel);
+		bool flagReturn = false;
+		if (varResult != null)
+		{
+			flagReturn = varResult.IsSuccess;
+		}
+
+		return flagReturn;
+
+	}
+
+}

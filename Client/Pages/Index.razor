@@ -1,0 +1,204 @@
+﻿@*@page "/"*@
+@page "/Index/{refMenuId:int?}"
+
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.Tokens.ITokensService TokenService;
+@inject Services.UserManagesService UserManagesService;
+
+@if (IsShowLoading)
+{
+    <NazmLoading IsShow="true" />
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <NazmCardGradient UniqueId="DiscoveriesCount"
+                              CSS="card card-img-holder box-discovery text-dark p-3"
+                              CardBgGradient="@(Infrastructure.Enums.CardBgGradientType.Danger)"
+            >
+                <IconOrTextOne>
+                    <i class="mdi mdi-briefcase-search mdi-64px float-left"></i>
+                </IconOrTextOne>
+                <IconOrTextTwo>
+                    <h3>@(UtilityClass.setSeparatedDigits(DiscoveriesCount.ToString()))</h3>
+                </IconOrTextTwo>
+                <Title>
+                    مجموع موارد کشف شده
+                </Title>
+
+            </NazmCardGradient>
+        </div>
+        <div class="col-md-4">
+            <NazmCardGradient UniqueId="NotCheckedCount"
+                              CSS="card card-img-holder box-discovery text-dark p-3"
+                              CardBgGradient="@(Infrastructure.Enums.CardBgGradientType.Warning)">
+                <IconOrTextOne>
+                    <i class="mdi mdi-briefcase-eye mdi-64px float-left"></i>
+                </IconOrTextOne>
+                <IconOrTextTwo>
+                    <h3>@(UtilityClass.setSeparatedDigits(NotCheckedCount.ToString()))</h3>
+                </IconOrTextTwo>
+                <Title>
+                    تعداد موارد کشف شده بررسی نشده
+                </Title>
+
+            </NazmCardGradient>
+        </div>
+        <div class="col-md-4">
+            <NazmCardGradient UniqueId="ConfirmCount"
+                              CSS="card card-img-holder box-discovery text-dark p-3"
+                              CardBgGradient="@(Infrastructure.Enums.CardBgGradientType.Success)">
+                <IconOrTextOne>
+                    <i class="mdi mdi-briefcase-check mdi-64px float-left"></i>
+                </IconOrTextOne>
+                <IconOrTextTwo>
+                    <h3>@(UtilityClass.setSeparatedDigits(ConfirmCount.ToString()))</h3>
+                </IconOrTextTwo>
+                <Title>
+                    <h5 class="card-text">تعداد موارد کشف شده تائید شده</h5>
+                </Title>
+
+            </NazmCardGradient>
+        </div>
+    </div>
+
+    
+    @*
+
+	<div class="row">
+		<div class="col-md-12 grid-margin stretch-card">
+			<div class="card">
+				<div class="card-body">
+					<h4 class="card-title">خدمــات</h4>
+					<ul>
+						<li>علم داده و هوش مصنوعی</li>
+						<li>داده کاوی</li>
+						<li>هوش کسب و کار</li>
+						<li>طراحی و توسعه سیستم‌های سفارش مشتری</li>
+						<li>کلان داده</li>
+						<li>انبار داده</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12 grid-margin stretch-card">
+			<div class="card">
+				<div class="card-body">
+					<h4 class="card-title">محصـــولات</h4>
+					<ul>
+						<li>نرم افزار هوش کسب و کار کلیک ویو</li>
+						<li>نرم افزار هوش کسب و کار کلیک سنس</li>
+						<li>نرم افزار هوش کسب و کار تابلو(Tableau)</li>
+						<li>نرم افزار هوش کسب و کار POWER BI</li>
+						<li>سامانه مدیریت عملکرد BSC</li>
+						<li>سیستم ارزیابی عملکرد کارکنان و مدیران</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>*@
+
+
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public int? refMenuId { get; set; }
+
+    public bool IsShowLoading { get; set; }
+
+    private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+    private int DiscoveriesCount { get; set; }
+
+    private int NotCheckedCount { get; set; }
+
+    private int ConfirmCount { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        IsShowLoading = true;
+        // ********************
+
+        lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+        await GetCountAsync();
+
+        /* MockData User
+        string strUserName = await myStorage.GetItemAsync<string>(Infrastructure.Utility.Key_UserName);
+        Infrastructure.MockData.UserClass user = await UserMockService.GetInstance().findByUserNameAsync(strUserName);
+
+            if (user != null)
+            {
+            await GetNotCheckedCountAsync(user.Id);
+
+            await GetConfirm1CountAsync(user.Id);
+        }
+        */
+
+        System.Guid? userId = await UtilityClass.getUserIdFromTokenAsync(TokenService);
+        if (userId != null)
+        {
+            await GetNotCheckedCountAsync(userId.ToString());
+
+            await GetConfirmCountAsync(userId.ToString());
+        }
+
+        // ********************
+        IsShowLoading = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    protected override bool ShouldRender()
+    {
+        return base.ShouldRender();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task GetCountAsync()
+    {
+        DiscoveriesCount = 5000000;
+
+        await Task.CompletedTask;
+    }
+
+    private async Task GetNotCheckedCountAsync(string userId)
+    {
+        NotCheckedCount = 4000000;
+
+        await Task.CompletedTask;
+    }
+
+    private async Task GetConfirmCountAsync(string userId)
+    {
+        ConfirmCount = 50000;
+
+        await Task.CompletedTask;
+    }
+
+    #endregion
+}

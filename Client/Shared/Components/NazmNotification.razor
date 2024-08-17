@@ -1,0 +1,83 @@
+﻿@inject ISnackbar Snackbar
+
+@if (NotificationSettings.Count > 0)
+{
+    Snackbar.Clear();
+
+    foreach (var notification in NotificationSettings)
+    {
+        switch (notification.MessageType)
+        {
+            case Infrastructure.Enums.MessageType.Info:
+                {
+                    PositionClass = MudBlazor.Defaults.Classes.Position.TopRight;
+                    Severity = MudBlazor.Severity.Info;
+                    break;
+                }
+            case Infrastructure.Enums.MessageType.Success:
+                {
+                    PositionClass = MudBlazor.Defaults.Classes.Position.TopRight;
+                    Severity = MudBlazor.Severity.Success;
+                    break;
+                }
+            case Infrastructure.Enums.MessageType.Error:
+                {
+                    PositionClass = MudBlazor.Defaults.Classes.Position.TopRight;
+                    Severity = MudBlazor.Severity.Error;
+                    break;
+                }
+            case Infrastructure.Enums.MessageType.Warning:
+                {
+                    PositionClass = MudBlazor.Defaults.Classes.Position.TopRight;
+                    Severity = MudBlazor.Severity.Warning;
+                    break;
+                }
+            default:
+                {
+                    PositionClass = MudBlazor.Defaults.Classes.Position.TopRight;
+                    Severity = MudBlazor.Severity.Normal;
+                    break;
+                }
+        }
+
+        SnackbarConfig(notification.Message, PositionClass, Severity);
+    }
+
+    NotificationSettings.Clear();
+}
+
+@code {
+
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public IList<Infrastructure.NotificationSettings> NotificationSettings { get; set; }
+
+    private string Message { get; set; }
+
+    private MudBlazor.Severity Severity { get; set; }
+
+    private string PositionClass { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        //PositionClass = MudBlazor.Defaults.Classes.Position.BottomCenter;
+    }
+
+    void SnackbarConfig(string message, string positionClass, MudBlazor.Severity severity)
+    {
+        Snackbar.Configuration.PositionClass = positionClass;
+        Snackbar.Configuration.ShowCloseIcon = true;
+
+        Snackbar.Add(message, severity);
+    }
+
+    #endregion
+}

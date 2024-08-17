@@ -1,0 +1,61 @@
+﻿@page "/PersonnelTaskTimes/Create"
+
+@inject NavigationManager NavigationManager;
+@inject Services.PersonnelTaskTimesService PersonnelTaskTimesService;
+
+<FormEditor 
+	Model="Model"
+	OnValidSubmit="OnSubmitAsync"
+	Type="Infrastructure.Enums.EditFormType.Create">
+</FormEditor>
+
+@code
+{
+	//protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
+	{
+		Model =
+			new ViewModels.PersonnelTaskTimes.PersonnelTaskTimeViewModel();
+	}
+
+	public ViewModels.PersonnelTaskTimes.PersonnelTaskTimeViewModel Model { get; set; }
+	private ViewModels.PersonnelTaskTimes.CreateRequestViewModel NewModel { get; set; }
+
+	//private void OnSubmit()
+	private async Task OnSubmitAsync()
+	{
+		// Save Data!
+		//Save();
+		bool flagResult = await SaveAsync();
+
+		if (flagResult)
+		{
+			string uri = $"{Infrastructure.Pages.Utility.setUri<Client.Pages.PersonnelTaskTimes.List>()}";
+			NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		}
+	}
+
+	//private async void Save()
+	private async Task<bool> SaveAsync()
+	{
+		NewModel = new ViewModels.PersonnelTaskTimes.CreateRequestViewModel()
+			{
+				PersonnelId = Model.PersonnelId,
+				TaskId = Model.TaskId,
+				WorkDate = Model.WorkDate.Value,
+				WorkTime = Model.WorkTime,
+				Descript = Model.Descript
+			};
+
+		var varResult = await PersonnelTaskTimesService.PostAsync(NewModel);
+		bool flagReturn = false;
+		if (varResult != null)
+		{
+			flagReturn = varResult.IsSuccess;
+		}
+
+		return flagReturn;
+
+	}
+
+}

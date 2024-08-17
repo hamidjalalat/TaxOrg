@@ -1,0 +1,52 @@
+﻿
+<InputCheckbox id="@(UniqueId)" class="@(CSS)" style="@(Style)" Value="@(ValueProperty)" ValueChanged="@((eventArgs) => OnValueChanged(eventArgs))" 
+               ValueExpression="() => ValueProperty" readonly="@(IsReadOnly)" @attributes="AdditionalAttributes" />
+
+
+
+
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter, EditorRequired]
+    public string UniqueId { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; } 
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public bool ValueProperty { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ValueChangedEventHandler { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+    }
+
+    private async Task OnValueChanged(bool value)
+    {
+        await ValueChangedEventHandler.InvokeAsync(value);
+    }
+
+    #endregion
+}

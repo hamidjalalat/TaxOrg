@@ -1,0 +1,106 @@
+﻿@inject Infrastructure.Utility UtilityClass;
+@implements IDisposable;
+
+@typeparam TItem;
+@* @typeparam TResult; *@
+
+<RadzenDropDownDataGrid id="@(UniqueId)" Name="@(UniqueId)" class="@(CSS)" Style="@(Style)" Disabled="@(IsDisabled)" Placeholder="@(Placeholder)"
+                        AllowClear="@(IsAllowClear)" AllowFiltering="@(IsAllowFiltering)" FilterOperator="StringFilterOperator.Contains" SearchTextPlaceholder="@(Resources.DataDictionary.Filter)"
+                        Data="@(DataItems)" @bind-Value="@(BindValue)" ValueProperty="@(ValueProperty)" TextProperty="@(TextProperty)"                        
+                        PagerAlwaysVisible="true" ShowPagingSummary="true" PagingSummaryFormat="@(Resources.Messages.Common.PagingSummaryFormat)"
+                        Change="@(OnValueChanged)">
+    <Columns>
+        <RadzenDropDownDataGridColumn Property="FullName" Title="@(Resources.DataDictionary.FullName)" Filterable="true" Sortable="false"  />
+    </Columns>
+</RadzenDropDownDataGrid>
+
+@code {
+    // ********************
+    #region Properties
+
+    [Parameter]
+    public string UniqueId { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public bool IsAllowClear { get; set; }
+
+    [Parameter]
+    public bool IsAllowFiltering { get; set; }
+
+    [Parameter]
+    public bool IsMultiple { get; set; }
+
+    [Parameter]
+    public bool IsChips { get; set; }
+
+    [Parameter]
+    public string SelectedItemsText { get; set; }
+
+    [Parameter]
+    public string ValueProperty { get; set; }
+
+    [Parameter]
+    public string TextProperty { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
+
+    [Parameter]
+    public IEnumerable<TItem> DataItems { get; set; }
+
+    [Parameter]
+    public object BindValue { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChangedEventHandler { get; set; }
+
+    object selectedDatas { get; set; }
+
+    #endregion
+
+    // ********************
+    #region Events
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (SelectedItemsText == null)
+            SelectedItemsText = Resources.Messages.Common.ItemsSelected;
+        if (Placeholder == null)
+            Placeholder = Resources.Messages.Validations.PleaseSelectOne;
+
+        selectedDatas = null;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task OnValueChanged(object args)
+    {
+        await ValueChangedEventHandler.InvokeAsync(args);
+    }
+
+    void IDisposable.Dispose()
+    {
+        selectedDatas = null;
+    }
+
+    #endregion
+}

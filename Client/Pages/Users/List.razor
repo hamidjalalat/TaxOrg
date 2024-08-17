@@ -1,0 +1,589 @@
+﻿@page "/Users/List/{refMenuId:int?}"
+
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager
+@inject Infrastructure.Utility UtilityClass;
+@inject Infrastructure.NotificationSettings NotificationSettingsClass;
+
+@inject Services.UserManagesService UserManagesService;
+
+@if (IsFormLoading)
+{
+	<NazmLoading IsShow="true" />
+}
+else
+{
+
+	@if (IsFormProgressing)
+	{
+		<NazmLoadingProgress IsShow="true"/>
+		
+	}
+
+	@if (refMenuId != null)
+	{
+
+		<div id="dgv-main-div" class="row">
+			<div class="col">
+				<RadzenDataGrid TItem="ViewModels.Users.UserManageViewModel" @ref="refToDataGrid" Data="@((dgvMain != null) ? dgvMain.Items: null)"
+					AllowColumnResize="true" AllowPaging="false" ShowPagingSummary="false" PagerPosition="PagerPosition.Bottom"
+					AllowSorting="true" Sort="OnSortGrid"
+					AllowFiltering="true" Filter="OnFilterAddGrid" FilterCleared="OnFilterClearedGrid" FilterDelay="@(Infrastructure.Utility.DataGridFilterDelay)"
+					FilterMode="FilterMode.Simple" LogicalFilterOperator="LogicalFilterOperator.And" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+					ApplyFilterText="@(Resources.Buttons.Apply)" ClearFilterText="@(Resources.Buttons.Clear)">
+
+				<EmptyTemplate>
+					<NazmDataGridEmptyTemplate />
+				</EmptyTemplate>
+
+				<HeaderTemplate>
+					<NazmDataGridHeaderTemplate IsGridExportExcelButton="true" GridExportExcelEventHandler="GridExportExcelAsync" IsCreateButton="true" CreateEventHandler="Create" />
+				</HeaderTemplate>
+
+				<Columns>
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="UserName" Title="@(Resources.DataDictionary.UserName)" Width="100px" />
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="Id" Title="@(Resources.DataDictionary.Id)" Width="50px" Visible="false"/>
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="FirstName" Title="@(Resources.DataDictionary.FirstName)" Width="115px" />
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="LastName" Title="@(Resources.DataDictionary.LastName)" />
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="NationalCode" Title="@(Resources.DataDictionary.NationalCode)" Width="100px" />				
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="GenderTitle1" Title="@(Resources.DataDictionary.GenderTitle1)" Width="70px" />
+					<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Property="OrganizationalUnit" Title="@(Resources.DataDictionary.OrganizationalUnit)" Width="200px" />
+						<RadzenDataGridColumn TItem="ViewModels.Users.UserManageViewModel" Title="@(Resources.DataDictionary.Action)" Width="175px" Sortable="false">
+						<Template Context="itemData">
+							<button type="button" class="btn btn-warning btn-sm" title="@(Resources.Buttons.Edit)" @onclick="() => Edit(itemData)">
+								<i class="@(Resources.ButtonsIcon.Edit) @(Resources.DefaultValues.IconSize18)"></i>
+							</button>
+
+							<button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.Delete)" @onclick="() => passingNewModelId(itemData)" data-bs-toggle="modal" data-bs-target="#modalDelete">
+								<i class="@(Resources.ButtonsIcon.Delete) @(Resources.DefaultValues.IconSize18)"></i>
+							</button>
+
+							@if (itemData.IsActive)
+							{
+								<button type="button" class="btn btn-success btn-sm mx-1" title="@(Resources.Buttons.Active)" @onclick="() => passingNewModelId(itemData)" data-bs-toggle="modal" data-bs-target="#inActivationModal">
+									<i class="@($"{Resources.ButtonsIcon.Active} {Resources.DefaultValues.IconSize18}")"></i>
+								</button>
+							}
+							else
+							{
+								<button type="button" class="btn btn-danger btn-sm mx-1" title="@(Resources.Buttons.InActive)" @onclick="() => passingNewModelId(itemData)" data-bs-toggle="modal" data-bs-target="#activationModal">
+									<i class="@($"{Resources.ButtonsIcon.InActive} {Resources.DefaultValues.IconSize18}")"></i>
+								</button>
+							}
+
+							<button type="button" class="btn btn-primary btn-sm" title="@(Resources.Buttons.ChangePassword)" @onclick="() => ToChangePasswordByAdmin(itemData)">
+								<i class="@(Resources.ButtonsIcon.ChangePassword) @(Resources.DefaultValues.IconSize18)"></i>
+							</button>
+
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+			</div>
+		</div>
+		@if (dgvMain != null && IsFormProgressing == false)
+		{
+			<NazmPagination TotalCount="@(dgvMain.TotalCount)" TotalPages="@(dgvMain.TotalPages)" PageNumber="@(dgvMain.PageNumber)" PageSize="@(dgvMain.PageSize)" EventPageNumberChanged="OnPageNumberChangedGrid" EventPageSizeChanged="OnPageSizeChangedGrid"  />
+		}
+	}
+	else
+	{
+		<NazmEmptyRecord />
+	}
+
+}
+
+<NazmNotification NotificationSettings="@(lstNotifications)" />
+
+<NazmModal  UniqueId="modalDelete"
+			RequiredClose="true"
+			IconType="Infrastructure.Enums.ModalClass.ModalIconType.Warning"
+			StateType="Infrastructure.Enums.ModalClass.ModalStateType.Confirm"
+			Title="@(Resources.DataDictionary.Warning)"
+			EventCallbackHandler="deleteModalConfirmHandlerAsync">
+	<Body>
+        @(string.Format(Resources.Messages.Validations.MessageDelete, Resources.DataDictionary.User))
+	</Body>
+</NazmModal>
+
+<NazmModal UniqueId="activationModal"
+		   RequiredClose="true"
+		   IconType="Infrastructure.Enums.ModalClass.ModalIconType.Warning"
+		   StateType="Infrastructure.Enums.ModalClass.ModalStateType.Confirm"
+		   Title="@(Resources.DataDictionary.Warning)"
+		   EventCallbackHandler="ActivationModalConfirmHandlerAsync">
+	<Body>
+		@(string.Format(Resources.Messages.Validations.ActionConfirm, Resources.DataDictionary.User))
+	</Body>
+</NazmModal>
+
+<NazmModal UniqueId="inActivationModal"
+		   RequiredClose="true"
+		   IconType="Infrastructure.Enums.ModalClass.ModalIconType.Warning"
+		   StateType="Infrastructure.Enums.ModalClass.ModalStateType.Confirm"
+		   Title="@(Resources.DataDictionary.Warning)"
+		   EventCallbackHandler="InActivationModalConfirmHandlerAsync">
+	<Body>
+		@(string.Format(Resources.Messages.Validations.ActionConfirm, Resources.DataDictionary.User))
+	</Body>
+</NazmModal>
+
+@* <div class="modal fade" id="activationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="UserModalActiveLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="UserModalActiveLabel">@(Resources.DataDictionary.Warning)</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				@(string.Format(Resources.Messages.Validations.ActionConfirm, Resources.DataDictionary.User))
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger btn-sm" title="@(Resources.Buttons.No)" data-bs-dismiss="modal">
+					<i class="@(Resources.ButtonsIcon.No) @(Resources.DefaultValues.IconSize24)"></i>
+				</button>
+
+				<button type="button" class="btn btn-success btn-sm" title="@(Resources.Buttons.Yes)" data-bs-dismiss="modal" @onclick="() => ActivationChange(SelectedModel)">
+					<i class="@(Resources.ButtonsIcon.Yes) @(Resources.DefaultValues.IconSize24)"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+</div> *@
+
+
+
+
+@code {
+
+	// ********************
+	#region Properties
+
+	[Parameter]
+	public int? refMenuId { get; set; }
+
+	public bool IsFormLoading { get; set; }
+	public bool IsFormProgressing { get; set; }
+
+	private ViewModels.Users.UserManageViewModel SelectedModel { get; set; }
+
+	private List<ViewModels.SortItem> lstSortItems { get; set; }
+	private List<ViewModels.FilterItem> lstFilterItems { get; set; }
+	RadzenDataGrid<ViewModels.Users.UserManageViewModel> refToDataGrid;
+	public ViewModels.PagingViewModel<ViewModels.Users.UserManageViewModel> dgvMain { get; set; }
+
+	private List<Infrastructure.NotificationSettings> lstNotifications { get; set; }
+
+	private bool IsActiveConfirmation { get; set; }
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		IsFormLoading = true;
+		// ********************
+
+		lstNotifications = new List<Infrastructure.NotificationSettings>();
+
+		dgvMain = null;
+
+		lstFilterItems = new List<ViewModels.FilterItem>();
+		lstSortItems = new List<ViewModels.SortItem>();
+
+		IsActiveConfirmation = false;
+
+		await bindGrid();
+		// ********************
+		IsFormLoading = false;
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (lstFilterItems.Count > 0)
+		{
+			foreach (var filterItem in lstFilterItems)
+			{
+				var column = refToDataGrid.ColumnsCollection.Where(c => c.Property == filterItem.Field).FirstOrDefault();
+
+				if (column != null)
+				{
+					column.FilterValue = filterItem.Value;
+					//column.FilterOperator = filterItem.Operator as Radzen.FilterOperator;
+				}
+			}
+			await refToDataGrid.Reload();
+		}
+		if (lstSortItems.Count > 0)
+		{
+			foreach (var sortItem in lstSortItems)
+			{
+				var column = refToDataGrid.ColumnsCollection.Where(c => c.Property == sortItem.Field).FirstOrDefault();
+
+				if (column != null)
+				{
+					column.SortOrder = (sortItem.SortOrder == Infrastructure.Utility.SortAscending) ? SortOrder.Ascending : SortOrder.Descending;
+				}
+			}
+			await refToDataGrid.Reload();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	private async Task Create()
+	{
+		IsFormProgressing = true;
+		// ********************
+		string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Users.Create>()}/{refMenuId.Value}";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task Edit(ViewModels.Users.UserManageViewModel viewModel)
+	{
+		IsFormProgressing = true;
+		// ********************
+		string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Users.Edit>()}/{refMenuId.Value}/{viewModel.Id}";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task ToChangePasswordByAdmin(ViewModels.Users.UserManageViewModel viewModel)
+	{
+		IsFormProgressing = true;
+		// ********************
+		string uri = $"{Infrastructure.Utility.setUri<Client.Pages.Users.ChangePasswordByAdmin>()}/{refMenuId.Value}/{viewModel.Id}";
+		NavigationManager.NavigateTo(uri: uri, forceLoad: false);
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task deleteModalConfirmHandlerAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await DeleteAsync(SelectedModel);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task DeleteAsync(ViewModels.Users.UserManageViewModel viewModel)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		var varResult = await UserManagesService.DeleteAsync(new Guid(viewModel.Id));
+
+		if (varResult != null)
+		{
+			lstNotifications.Clear();
+			if (varResult.IsSuccess)
+			{
+				if (varResult.Successes.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Successes, Infrastructure.Enums.MessageType.Success));
+			}
+			if (varResult.IsFailed)
+			{
+				if (varResult.Errors.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(varResult.Errors, Infrastructure.Enums.MessageType.Error));
+			}
+		}
+
+		await bindGrid();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task ActivationModalConfirmHandlerAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await ActivationChange(true);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task InActivationModalConfirmHandlerAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await ActivationChange(false);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task ActivationChange(bool value)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		ViewModels.Users.UserManageActiveByAdminViewModel inputParamsViewModel = new ViewModels.Users.UserManageActiveByAdminViewModel()
+		{
+			UserId = SelectedModel.Id,
+			IsActive = value,
+		};
+
+		var activationChanged = await UserManagesService.ActiveByAdminAsync(inputParamsViewModel);
+
+		if (activationChanged != null)
+		{
+			if (activationChanged.IsSuccess)
+			{
+				if (activationChanged.Successes.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(activationChanged.Successes, Infrastructure.Enums.MessageType.Success));
+			}
+			if (activationChanged.IsFailed)
+			{
+				if (activationChanged.Errors.Count() > 0)
+					lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+						(activationChanged.Errors, Infrastructure.Enums.MessageType.Error));
+			}
+		}
+
+		await bindGrid();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private void passingNewModelId(ViewModels.Users.UserManageViewModel viewModel)
+	{
+		SelectedModel = viewModel;
+	}
+
+	private async Task GridExportExcelAsync()
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await bindGrid(pageSize: Infrastructure.Utility.PageSizeMax, fileExportType: Domain.Enums.FileExportTypeEnum.Office_Excel);
+
+		// ********************
+		IsFormProgressing = false;
+	} 
+
+	private async Task bindGrid(int? pageNumber = Infrastructure.Utility.PageNumber, int? pageSize = Infrastructure.Utility.PageSize, Domain.Enums.FileExportTypeEnum? fileExportType = null)
+	{
+		if (refMenuId != null)
+		{
+
+			ViewModels.FilterParams filterParams = new ViewModels.FilterParams();
+			if (lstFilterItems.Count > 0)
+			{
+				string strFilterJson = Newtonsoft.Json.JsonConvert.SerializeObject(lstFilterItems);
+
+				filterParams.FilterJson = strFilterJson;
+			}
+			if (lstSortItems.Count > 0)
+			{
+				string strSort = null;
+				foreach (var sortItem in lstSortItems)
+				{
+					strSort += $"{sortItem.Field} {sortItem.SortOrder}, ";
+				}
+
+				filterParams.SortBy = strSort.Trim().TrimEnd(',');
+			}
+
+			if (fileExportType == null)
+			{
+				ViewModels.Shared.PublicViewModel inputParamsViewModel = new ViewModels.Shared.PublicViewModel()
+				{
+					PageNumber = pageNumber.Value,
+					PageSize = pageSize.Value,
+					FilterParams = filterParams,
+					MenuId = refMenuId.Value,
+				};
+
+				var varGrid = await UserManagesService.FetchAsync(inputParamsViewModel);
+				if (varGrid != null)
+				{
+					if (varGrid.IsSuccess)
+						dgvMain = varGrid.Value;
+				}
+			}
+			else if (fileExportType == Domain.Enums.FileExportTypeEnum.Office_Excel)
+			{
+				var varGridColumns = await UtilityClass.getGridColumnListAsync(refToDataGrid.ColumnsCollection);
+
+				ViewModels.Shared.PublicViewModel inputParamsViewModel = new()
+				{
+					PageSize = pageSize.Value,
+					FilterParams = filterParams,
+					MenuId = refMenuId.Value,
+					FileExportType = Domain.Enums.FileExportTypeEnum.Office_Excel,
+					FileExportColumns = varGridColumns,
+				};
+
+				string fileExportName = $"{Resources.DataDictionary.UsersList}.xlsx";
+				var varExportExcelData = await UserManagesService.FetchAllAndFileDownloadAsync(inputParamsViewModel);
+				if (varExportExcelData != null)
+				{
+					if (varExportExcelData.IsSuccess)
+					{
+						await UtilityClass.FileDownloadAsDataStreamFromAPIAsync(JsRuntime, fileExportName, varExportExcelData.Value);
+
+						if (varExportExcelData.Successes.Count() > 0)
+							lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+								(varExportExcelData.Successes, Infrastructure.Enums.MessageType.Success));
+					}
+					if (varExportExcelData.IsFailed)
+					{
+						if (varExportExcelData.Errors.Count() > 0)
+							lstNotifications.AddRange(NotificationSettingsClass.setNotificationsList
+								(varExportExcelData.Errors, Infrastructure.Enums.MessageType.Error));
+					}
+				}
+			}
+		}
+	}
+
+	private async Task OnSortGrid(DataGridColumnSortEventArgs<ViewModels.Users.UserManageViewModel> args)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		ViewModels.SortItem sortColumn = new ViewModels.SortItem()
+			{
+				Field = args.Column.Property,
+				SortOrder = (args.SortOrder == SortOrder.Ascending) ? Infrastructure.Utility.SortAscending : Infrastructure.Utility.SortDescending,
+			};
+
+		if (lstSortItems.Exists(c => c.Field == args.Column.Property))
+		{
+			await sortItemsRemove(args.Column.Property);
+		}
+		if ((args.SortOrder == SortOrder.Ascending) || (args.SortOrder == SortOrder.Descending))
+		{
+			if (lstSortItems.Count > 0)
+				lstSortItems.Clear();
+
+			lstSortItems.Add(sortColumn);
+		}
+
+		await bindGrid();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task OnFilterAddGrid(DataGridColumnFilterEventArgs<ViewModels.Users.UserManageViewModel> args)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		ViewModels.FilterItem filterColumn = new ViewModels.FilterItem()
+			{
+				Field = args.Column.Property,
+				Operator = args.Column.FilterOperator.ToString(),//.Replace("Equals", "eq"),
+				Value = args.Column.GetFilterValue(),
+			};
+
+		if (lstFilterItems.Exists(c => c.Field == args.Column.Property))
+		{
+			await filterItemsRemove(args.Column.Property);
+		}
+		lstFilterItems.Add(filterColumn);
+
+		await bindGrid();
+
+		StateHasChanged();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task OnFilterClearedGrid(DataGridColumnFilterEventArgs<ViewModels.Users.UserManageViewModel> args)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		if (lstFilterItems.Exists(c => c.Field == args.Column.Property))
+		{
+			await filterItemsRemove(args.Column.Property);
+		}
+
+		await bindGrid();
+
+		StateHasChanged();
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task sortItemsRemove(string strField)
+	{
+		await Task.Run(() =>
+			{
+				int index = 0;
+				if (lstSortItems.Count > 0)
+				{
+					foreach (var sortItem in lstSortItems)
+					{
+						if (sortItem.Field == strField)
+							break;
+						index++;
+					}
+
+					lstSortItems.RemoveAt(index);
+				}
+			});
+	}
+
+	private async Task filterItemsRemove(string strField)
+	{
+		await Task.Run(() =>
+			{
+				int index = 0;
+				if (lstFilterItems.Count > 0)
+				{
+					foreach (var filterItem in lstFilterItems)
+					{
+						if (filterItem.Field == strField)
+							break;
+						index++;
+					}
+
+					lstFilterItems.RemoveAt(index);
+				}
+			});
+	}
+
+	private async Task OnPageNumberChangedGrid(int pageNum)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await bindGrid(pageNumber: pageNum, pageSize: dgvMain?.PageSize);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+	private async Task OnPageSizeChangedGrid(int pageSize)
+	{
+		IsFormProgressing = true;
+		// ********************
+
+		await bindGrid(pageSize: pageSize);
+
+		// ********************
+		IsFormProgressing = false;
+	}
+
+
+
+	#endregion
+}

@@ -1,0 +1,61 @@
+﻿@inherits LayoutComponentBase
+
+
+<div class="container-scroller rtl font-iranSansWeb">
+	<!-- navbar -->
+
+    <MudThemeProvider />
+    <MudSnackbarProvider />
+
+	<nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row login-heder">
+		<div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+			<a class="navbar-brand brand-logo"><img src="@(Resources.DefaultValues.OrganizationLogo)" alt="logo" /></a>
+			<a class="navbar-brand brand-logo-mini"><img src="@(Resources.DefaultValues.OrganizationLogoMini)" alt="logo" /></a>
+		</div>
+		<div class="navbar-menu-wrapper d-flex align-items-stretch">
+			<div class="search-field d-none d-md-block">
+				<div class="d-flex align-items-center h-100">
+					<h5>
+						<span class="tejaratbank-color h3 pr-3">@(Resources.DefaultValues.ApplicationName)</span>
+					</h5>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- page-body-wrapper -->
+	<div class="container-fluid page-body-wrapper">
+
+		<!-- main-panel -->
+		<div class="main">
+			<div class="container mt-5">
+				@Body
+			</div>
+		</div>
+
+		<!-- footer -->
+		<footer class="footer fixed-bottom">
+			<div class="container-fluid d-flex justify-content-between">
+				<span class="text-muted d-block text-center text-sm-start d-sm-inline-block">
+					<img src="@(Resources.DefaultValues.CompanyLogo)" alt="logo" width="32" />
+					<span class="tejaratbank-color">@(Resources.DefaultValues.CompanyName) © @(Nazm.DateConversionClass.GetInstance().GetPersianDateCurrentYear())</span>
+				</span>
+				<span class="text-center"> @($"{Resources.DataDictionary.Version} : {Resources.DefaultValues.ApplicationVersion}") </span>
+				<span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> <a class="tejaratbank-color" href="@(Resources.DefaultValues.CompanyLink)" target="_blank">@(Resources.DefaultValues.CompanyLinkTitle)</a></span>
+			</div>
+		</footer>
+
+	</div>
+</div>
+
+@code {
+	// ********************
+	#region Properties
+
+	#endregion
+
+	// ********************
+	#region Events
+
+	#endregion
+}
